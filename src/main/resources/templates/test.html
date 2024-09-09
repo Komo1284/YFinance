@@ -21,17 +21,40 @@
         }
     </style>
     <script>
+        let symbols = [];
+
+        function addSymbol() {
+            const symbol = document.getElementById('symbol').value;
+            if (symbol && !symbols.includes(symbol)) {
+                symbols.push(symbol);
+                displaySymbols();
+                document.getElementById('symbol').value = '';
+            }
+        }
+
+        function removeSymbol(index) {
+            symbols.splice(index, 1);
+            displaySymbols();
+        }
+
+        function displaySymbols() {
+            const symbolList = document.getElementById('symbolList');
+            symbolList.innerHTML = '';
+            symbols.forEach((symbol, index) => {
+                symbolList.innerHTML += `<li>${symbol} <button onclick="removeSymbol(${index})">Remove</button></li>`;
+            });
+        }
+
         async function fetchFinancialData() {
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
-            const symbols = document.getElementById('symbols').value;
 
-            if (!startDate || !endDate || !symbols) {
+            if (!startDate || !endDate || symbols.length === 0) {
                 alert('모든 입력값을 채워주세요.');
                 return;
             }
 
-            const response = await fetch(`/financial-data?startDate=${new Date(startDate).getTime() / 1000}&endDate=${new Date(endDate).getTime() / 1000}&symbol=${symbols}`);
+            const response = await fetch(`/financial-data?startDate=${new Date(startDate).getTime() / 1000}&endDate=${new Date(endDate).getTime() / 1000}&symbol=${symbols.join(',')}`);
             const data = await response.json();
 
             if (response.ok) {
@@ -46,7 +69,7 @@
             tableBody.innerHTML = '';
 
             if (!data || data.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="8">데이터가 없습니다</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="9">데이터가 없습니다</td></tr>';
                 return;
             }
 
@@ -72,10 +95,17 @@
 <body>
 <h1>Financial Data</h1>
 
-<form onsubmit="event.preventDefault(); fetchFinancialData();">
-    <label for="symbols">기업 코드 (쉼표로 구분):</label>
-    <input type="text" id="symbols" placeholder="예: 6701, 6758"><br><br>
+<form onsubmit="event.preventDefault(); addSymbol();">
+    <label for="symbol">기업 코드 추가:</label>
+    <input type="text" id="symbol" placeholder="예: 6701, 6758">
+    <button type="submit">추가</button>
+</form>
 
+<ul id="symbolList">
+    <!-- 추가된 기업 코드 목록 -->
+</ul>
+
+<form onsubmit="event.preventDefault(); fetchFinancialData();">
     <label for="startDate">시작 날짜:</label>
     <input type="date" id="startDate"><br><br>
 
