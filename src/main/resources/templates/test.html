@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Data</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <script>
+        async function fetchFinancialData() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const symbols = document.getElementById('symbols').value;
+
+            if (!startDate || !endDate || !symbols) {
+                alert('모든 입력값을 채워주세요.');
+                return;
+            }
+
+            const response = await fetch(`/financial-data?startDate=${new Date(startDate).getTime() / 1000}&endDate=${new Date(endDate).getTime() / 1000}&symbol=${symbols}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                displayData(data);
+            } else {
+                alert('데이터를 가져오는 데 실패했습니다.');
+            }
+        }
+
+        function displayData(data) {
+            const tableBody = document.getElementById('financialData');
+            tableBody.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8">데이터가 없습니다</td></tr>';
+                return;
+            }
+
+            data.forEach(entry => {
+                const row = `
+            <tr>
+                <td>${entry.date}</td>
+                <td>${entry.shortName}</td>
+                <td>${entry.open}</td>
+                <td>${entry.price10}</td>
+                <td>${entry.price11}</td>
+                <td>${entry.price13}</td>
+                <td>${entry.price14}</td>
+                <td>${entry.close}</td>
+                <td><textarea>메모</textarea></td>
+            </tr>
+        `;
+                tableBody.innerHTML += row;
+            });
+        }
+    </script>
+</head>
+<body>
+<h1>Financial Data</h1>
+
+<form onsubmit="event.preventDefault(); fetchFinancialData();">
+    <label for="symbols">기업 코드 (쉼표로 구분):</label>
+    <input type="text" id="symbols" placeholder="예: 6701, 6758"><br><br>
+
+    <label for="startDate">시작 날짜:</label>
+    <input type="date" id="startDate"><br><br>
+
+    <label for="endDate">종료 날짜:</label>
+    <input type="date" id="endDate"><br><br>
+
+    <button type="submit">데이터 조회</button>
+</form>
+
+<h2>조회 결과</h2>
+<table>
+    <thead>
+    <tr>
+        <th>날짜</th>
+        <th>기업명</th>
+        <th>시가</th>
+        <th>10:00</th>
+        <th>11:00</th>
+        <th>13:00</th>
+        <th>14:00</th>
+        <th>종가</th>
+        <th>비고</th>
+    </tr>
+    </thead>
+    <tbody id="financialData">
+    <!-- 데이터가 여기 채워집니다 -->
+    </tbody>
+</table>
+</body>
+</html>
