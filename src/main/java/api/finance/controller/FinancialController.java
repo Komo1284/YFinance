@@ -45,43 +45,78 @@ public class FinancialController {
         List<FinancialDataDto> result = new ArrayList<>();
 
         // 날짜별로 처리
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
+        String previousDate = "";
+        FinancialDataDto dto = null;
+
         for (int i = 0; i < financialResponse.getChart().getResult().get(0).getTimestamp().size(); i++) {
             long timestamp = financialResponse.getChart().getResult().get(0).getTimestamp().get(i);
             Date date = new Date(timestamp * 1000);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
 
             // 날짜를 포맷하여 문자열로 변환
-            String dateString = sdf.format(date);
+            String currentDate = sdf.format(date);
 
-            // 해당 날짜의 데이터
-            double open = financialResponse.getChart().getResult().get(0).getIndicators().getQuote().get(0).getOpen().get(i);
-            double close = financialResponse.getChart().getResult().get(0).getIndicators().getQuote().get(0).getClose().get(i);
+            // 새로운 날짜일 경우 새로운 DTO 생성
+            if (!currentDate.equals(previousDate)) {
+                if (dto != null) {
+                    // 이전 날짜의 데이터를 result에 추가
+                    result.add(dto);
+                }
 
-            FinancialDataDto dto = new FinancialDataDto();
-            dto.setDate(dateString);
-            dto.setShortName(financialResponse.getChart().getResult().get(0).getMeta().getShortName());
+                dto = new FinancialDataDto();
+                dto.setDate(currentDate);
+                dto.setShortName(financialResponse.getChart().getResult().get(0).getMeta().getShortName());
+                dto.setOpen(financialResponse.getChart().getResult().get(0).getIndicators().getQuote().get(0).getOpen().get(i)); // 시가
+                previousDate = currentDate;
+            }
 
-            // 시가
-            dto.setOpen(open);
-            // 시간대별 가격 (예시: 가장 가까운 시간대의 가격을 설정)
-            dto.setPrice10(findPriceAtTime(financialResponse, i, "10:00"));
-            dto.setPrice11(findPriceAtTime(financialResponse, i, "11:00"));
-            dto.setPrice13(findPriceAtTime(financialResponse, i, "13:00"));
-            dto.setPrice14(findPriceAtTime(financialResponse, i, "14:00"));
-            // 종가
-            dto.setClose(close);
+            // 시간에 따른 데이터를 각 필드에 매핑
+            String timeString = new SimpleDateFormat("HH:mm").format(date);
+            if (timeString.equals("10:00")) {
+                dto.setPrice10(findPriceAtTime(financialResponse, i));
+            } else if (timeString.equals("11:00")) {
+                dto.setPrice11(findPriceAtTime(financialResponse, i));
+            } else if (timeString.equals("13:00")) {
+                dto.setPrice13(findPriceAtTime(financialResponse, i));
+            } else if (timeString.equals("14:00")) {
+                dto.setPrice14(findPriceAtTime(financialResponse, i));
+            }
 
+            // 마지막 시간대의 종가 설정 (예: 15:00 또는 다른 마감 시간)
+            if (isEndOfDay(financialResponse, i, currentDate)) {
+                dto.setClose(financialResponse.getChart().getResult().get(0).getIndicators().getQuote().get(0).getClose().get(i));
+            }
+        }
+
+        // 마지막 DTO를 추가
+        if (dto != null) {
             result.add(dto);
         }
 
         return result;
     }
 
-    private double findPriceAtTime(FinancialResponse financialResponse, int index, String time) {
-        // 시간대별 가격 결정 로직 구현
-        // 예를 들어, 가장 가까운 시간대의 가격을 반환
-        return financialResponse.getChart().getResult().get(0).getIndicators().getQuote().get(0).getClose().get(index); // Placeholder
+    // 하루의 마지막 인덱스인지 확인하는 로직 수정
+    private boolean isEndOfDay(FinancialResponse financialResponse, int index, String currentDate) {
+        // 해당 인덱스의 날짜가 하루의 마지막 데이터인지 확인하는 로직
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
+
+        // 현재 인덱스 날짜와 다음 인덱스 날짜가 다르면 그날의 마지막 데이터임
+        if (index + 1 < financialResponse.getChart().getResult().get(0).getTimestamp().size()) {
+            long nextTimestamp = financialResponse.getChart().getResult().get(0).getTimestamp().get(index + 1);
+            String nextDate = sdf.format(new Date(nextTimestamp * 1000));
+            return !nextDate.equals(currentDate);
+        }
+
+        // 마지막 데이터일 경우
+        return true;
+    }
+
+    private double findPriceAtTime(FinancialResponse financialResponse, int index) {
+        // 시간대별로 가장 가까운 가격을 반환하는 로직
+        return financialResponse.getChart().getResult().get(0).getIndicators().getQuote().get(0).getOpen().get(index);
     }
 
     private FinancialResponse parseResponse(String response) {
