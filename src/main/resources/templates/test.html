@@ -23,9 +23,16 @@
     <script>
         let symbols = [];
 
+        async function fetchSavedSymbols() {
+            const response = await fetch("/get-symbols");
+            symbols = await response.json();
+            displaySymbols();
+        }
+
         function addSymbol() {
             const symbol = document.getElementById('symbol').value;
             if (symbol && !symbols.includes(symbol)) {
+                fetch(`/add-symbol?symbol=${symbol}`, { method: 'POST' });
                 symbols.push(symbol);
                 displaySymbols();
                 document.getElementById('symbol').value = '';
@@ -33,6 +40,8 @@
         }
 
         function removeSymbol(index) {
+            const symbol = symbols[index];
+            fetch(`/remove-symbol?symbol=${symbol}`, { method: 'POST' });
             symbols.splice(index, 1);
             displaySymbols();
         }
@@ -44,6 +53,10 @@
                 symbolList.innerHTML += `<li>${symbol} <button onclick="removeSymbol(${index})">Remove</button></li>`;
             });
         }
+
+        window.onload = function () {
+            fetchSavedSymbols();  // 페이지 로드 시 서버에서 저장된 기업 목록을 가져옴
+        };
 
         async function fetchFinancialData() {
             const startDate = document.getElementById('startDate').value;

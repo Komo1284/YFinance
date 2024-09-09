@@ -5,24 +5,37 @@ import api.finance.dto.FinancialResponse;
 import api.finance.service.FinancialService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 @RestController
+@AllArgsConstructor
 public class FinancialController {
 
     private final FinancialService financialService;
 
-    public FinancialController(FinancialService financialService) {
-        this.financialService = financialService;
+    @PostMapping("/add-symbol")
+    public void addSymbol(@RequestParam String symbol) {
+        financialService.addSymbol(symbol);
+    }
+
+    // 기업 목록에서 symbol 제거하는 API
+    @PostMapping("/remove-symbol")
+    public void removeSymbol(@RequestParam String symbol) {
+        financialService.removeSymbol(symbol);
+    }
+
+    // 저장된 기업 목록을 조회하는 API
+    @GetMapping("/get-symbols")
+    public List<String> getSymbols() {
+        return financialService.getSymbols();
     }
 
     @GetMapping("/financial-data")
