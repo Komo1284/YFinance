@@ -98,6 +98,7 @@ public class FinancialController {
                     dto.setDate(currentDate);
                     dto.setShortName(financialResponse.getChart().getResult().get(0).getMeta().getShortName());
                     dto.setOpen(financialResponse.getChart().getResult().get(0).getIndicators().getQuote().get(0).getOpen().get(i));
+                    dto.setSymbol(sym);
                     previousDate = currentDate;
                 }
 
