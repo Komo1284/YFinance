@@ -112,12 +112,12 @@
             <tr>
                 <td>${entry.date}</td>
                 <td><a href="${secUrl}" target="_blank">${entry.shortName}</a></td>
-                <td>${entry.open}</td>
-                <td>${entry.price10}</td>
-                <td>${entry.price11}</td>
-                <td>${entry.price13}</td>
-                <td>${entry.price14}</td>
-                <td>${entry.close}</td>
+                <td>${parseFloat(entry.open).toFixed(1)}</td>
+                <td>${parseFloat(entry.price10).toFixed(1)}</td>
+                <td>${parseFloat(entry.price11).toFixed(1)}</td>
+                <td>${parseFloat(entry.price13).toFixed(1)}</td>
+                <td>${parseFloat(entry.price14).toFixed(1)}</td>
+                <td>${parseFloat(entry.close).toFixed(1)}</td>
                 <td><textarea>메모</textarea></td>
             </tr>
         `;
