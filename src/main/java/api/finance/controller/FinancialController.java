@@ -145,8 +145,8 @@ public class FinancialController {
     // 구분선 DTO 생성
     private FinancialDataDto createSeparatorDto() {
         FinancialDataDto separatorDto = new FinancialDataDto();
-        separatorDto.setDate("-----------");
-        separatorDto.setShortName("-----------");
+        separatorDto.setDate("--------------");
+        separatorDto.setShortName("------------------------------------");
         separatorDto.setOpen(0.0);
         separatorDto.setPrice10(0.0);
         separatorDto.setPrice11(0.0);
