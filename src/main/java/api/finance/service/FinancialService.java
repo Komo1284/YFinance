@@ -54,16 +54,30 @@ public class FinancialService {
     public void resetSymbols() {
         symbolToNameMap.clear();  // 기존 목록을 초기화
         // 유명한 10개 기업의 코드와 이름 예시
-        symbolToNameMap.put("6758", "SONY GROUP CORPORATION");
-        symbolToNameMap.put("7203", "TOYOTA MOTOR CORP");
-        symbolToNameMap.put("9984", "SOFTBANK GROUP CORP");
-        symbolToNameMap.put("9432", "NIPPON TEL & TEL CORP");
-        symbolToNameMap.put("6861", "KEYENCE CORP");
+        symbolToNameMap.put("4062", "IBIDEN CO LTD");
+        symbolToNameMap.put("4568", "DAIICHI SANKYO COMPANY LIMITED");
+        symbolToNameMap.put("5401", "NIPPON STEEL CORPORATION");
+        symbolToNameMap.put("6146", "DISCO CORPORATION");
+        symbolToNameMap.put("6201", "TOYOTA INDUSTRIES CORP");
+        symbolToNameMap.put("6273", "SMC CORP");
+        symbolToNameMap.put("6501", "HITACHI");
+        symbolToNameMap.put("6701", "NEC CORP");
+        symbolToNameMap.put("6702", "FUJITSU");
+        symbolToNameMap.put("6762", "TDK CORP");
+        symbolToNameMap.put("6857", "ADVANTEST CORP");
+        symbolToNameMap.put("6920", "LASERTEC CORP");
+        symbolToNameMap.put("7011", "MITSUBISHI HEAVY INDUSTRIES");
+        symbolToNameMap.put("7012", "KAWASAKI HEAVY INDUSTRIES");
+        symbolToNameMap.put("7013", "IHI CORPORATION");
+        symbolToNameMap.put("7735", "SCREEN HOLDINGS CO LTD");
         symbolToNameMap.put("8035", "TOKYO ELECTRON");
-        symbolToNameMap.put("6954", "FANUC CORPORATION");
+        symbolToNameMap.put("8766", "TOKIO MARINE HOLDINGS INC");
+        symbolToNameMap.put("9101", "NIPPON YUSEN KABUSHIKI KAISHA");
+        symbolToNameMap.put("9104", "MITSUI O.S.K. LINES LTD");
+        symbolToNameMap.put("9501", "TOKYO ELEC POWER CO HLDGS INC");
+        symbolToNameMap.put("9503", "KANSAI ELECTRIC POWER CO INC");
+        symbolToNameMap.put("9843", "NITORI HOLDINGS CO LTD");
         symbolToNameMap.put("9983", "FAST RETAILING CO LTD");
-        symbolToNameMap.put("7733", "OLYMPUS CORPORATION");
-        symbolToNameMap.put("7267", "HONDA MOTOR CO");
     }
 
     // 기업명(shortName)을 가져오는 메소드
