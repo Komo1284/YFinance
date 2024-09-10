@@ -44,4 +44,20 @@ public class FinancialService {
         return new ArrayList<>(symbols);  // 변경 방지를 위해 복사본 반환
     }
 
+    // 초기 기업 목록으로 리셋하는 메소드
+    public void resetSymbols() {
+        symbols.clear();  // 기존 목록을 초기화
+        // 유명한 10개 기업의 코드 예시
+        symbols.add("6758");
+        symbols.add("7203");
+        symbols.add("9984");
+        symbols.add("9432");
+        symbols.add("6861");
+        symbols.add("8035");
+        symbols.add("6954");
+        symbols.add("9983");
+        symbols.add("7733");
+        symbols.add("7267");
+    }
+
 }

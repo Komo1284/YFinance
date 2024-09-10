@@ -54,8 +54,15 @@
             });
         }
 
+        // 새로운 리셋 기능을 추가
+        function resetSymbols() {
+            fetch("/reset-symbols", { method: 'POST' })
+                .then(() => fetchSavedSymbols()) // 초기 기업 목록을 불러와서 표시
+                .catch(error => console.error('Error resetting symbols:', error));
+        }
+
         window.onload = function () {
-            fetchSavedSymbols();  // 페이지 로드 시 서버에서 저장된 기업 목록을 가져옴
+            fetchSavedSymbols();
         };
 
         async function fetchFinancialData() {
@@ -117,6 +124,9 @@
 <ul id="symbolList">
     <!-- 추가된 기업 코드 목록 -->
 </ul>
+
+<!-- 리셋 버튼 추가 -->
+<button onclick="resetSymbols()">기업 목록 리셋</button>
 
 <form onsubmit="event.preventDefault(); fetchFinancialData();">
     <label for="startDate">시작 날짜:</label>

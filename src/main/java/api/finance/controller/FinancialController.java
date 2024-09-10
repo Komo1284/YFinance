@@ -38,6 +38,12 @@ public class FinancialController {
         return financialService.getSymbols();
     }
 
+    // 초기 기업 목록을 설정하는 리셋 API
+    @PostMapping("/reset-symbols")
+    public void resetSymbols() {
+        financialService.resetSymbols();  // 초기 기업 목록으로 리셋
+    }
+
     @GetMapping("/financial-data")
     @ResponseBody
     public List<FinancialDataDto> getFinancialData(
