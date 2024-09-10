@@ -34,10 +34,14 @@
             if (symbol && !symbols[symbol]) {
                 fetch(`/add-symbol?symbol=${symbol}`, { method: 'POST' })
                     .then(() => {
-                        // 기업명과 기업코드를 함께 추가
-                        symbols[symbol] = symbol;
-                        displaySymbols();
-                        document.getElementById('symbol').value = '';
+                        // 기업명 가져오기
+                        fetch(`/get-symbol-name?symbol=${symbol}`)
+                            .then(response => response.text())
+                            .then(name => {
+                                symbols[symbol] = name; // 기업명과 함께 업데이트
+                                displaySymbols();
+                                document.getElementById('symbol').value = '';
+                            });
                     });
             }
         }
@@ -45,9 +49,11 @@
         function removeSymbol(symbol) {
             fetch(`/remove-symbol?symbol=${symbol}`, { method: 'POST' })
                 .then(() => {
+                    // 기업 목록 업데이트
                     delete symbols[symbol];
                     displaySymbols();
-                });
+                })
+                .catch(error => console.error('Error removing symbol:', error));
         }
 
         function displaySymbols() {

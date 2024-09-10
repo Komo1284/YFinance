@@ -23,6 +23,12 @@ public class FinancialController {
         financialService.addSymbol(symbol);
     }
 
+    @GetMapping("/get-symbol-name")
+    @ResponseBody
+    public String getSymbolName(@RequestParam String symbol) {
+        return financialService.getShortName(symbol);
+    }
+
     // 기업 목록에서 symbol 제거하는 API
     @PostMapping("/remove-symbol")
     public void removeSymbol(@RequestParam String symbol) {

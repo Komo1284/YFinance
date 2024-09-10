@@ -41,6 +41,10 @@ public class FinancialService {
         symbolToNameMap.remove(symbol);
     }
 
+    public String getShortName(String symbol) {
+        return symbolToNameMap.getOrDefault(symbol, "");
+    }
+
     // 저장된 기업 목록을 반환
     public Map<String, String> getSymbolsWithNames() {
         return new HashMap<>(symbolToNameMap);  // Map을 복사해서 반환
@@ -50,21 +54,21 @@ public class FinancialService {
     public void resetSymbols() {
         symbolToNameMap.clear();  // 기존 목록을 초기화
         // 유명한 10개 기업의 코드와 이름 예시
-        symbolToNameMap.put("6758", "Sony Group Corporation");
-        symbolToNameMap.put("7203", "Toyota Motor Corporation");
-        symbolToNameMap.put("9984", "SoftBank Group Corp.");
-        symbolToNameMap.put("9432", "NTT DOCOMO, INC.");
-        symbolToNameMap.put("6861", "Keyence Corporation");
-        symbolToNameMap.put("8035", "Tokyo Electron Ltd.");
-        symbolToNameMap.put("6954", "Fanuc Corporation");
-        symbolToNameMap.put("9983", "Fast Retailing Co., Ltd.");
-        symbolToNameMap.put("7733", "Olympus Corporation");
-        symbolToNameMap.put("7267", "Honda Motor Co., Ltd.");
+        symbolToNameMap.put("6758", "SONY GROUP CORPORATION");
+        symbolToNameMap.put("7203", "TOYOTA MOTOR CORP");
+        symbolToNameMap.put("9984", "SOFTBANK GROUP CORP");
+        symbolToNameMap.put("9432", "NIPPON TEL & TEL CORP");
+        symbolToNameMap.put("6861", "KEYENCE CORP");
+        symbolToNameMap.put("8035", "TOKYO ELECTRON");
+        symbolToNameMap.put("6954", "FANUC CORPORATION");
+        symbolToNameMap.put("9983", "FAST RETAILING CO LTD");
+        symbolToNameMap.put("7733", "OLYMPUS CORPORATION");
+        symbolToNameMap.put("7267", "HONDA MOTOR CO");
     }
 
     // 기업명(shortName)을 가져오는 메소드
     private String fetchShortName(String symbol) {
-        String url = String.format("https://query2.finance.yahoo.com/v8/finance/chart/%s.T?interval=1d", symbol);
+        String url = String.format("https://query2.finance.yahoo.com/v8/finance/chart/%s.T", symbol);
         String response = restTemplate.getForObject(url, String.class);
 
         FinancialResponse financialResponse = parseResponse(response);
