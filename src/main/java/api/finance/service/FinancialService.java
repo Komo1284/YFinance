@@ -1,13 +1,13 @@
 package api.finance.service;
 
+import api.finance.dto.FinancialResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class FinancialService {
@@ -24,40 +24,61 @@ public class FinancialService {
         return restTemplate.getForObject(url, String.class);
     }
 
-    // 서버 메모리에 기업 목록을 저장하는 리스트
-    private List<String> symbols = new ArrayList<>();
+    /// 기업 코드와 이름을 저장하는 Map
+    private Map<String, String> symbolToNameMap = new HashMap<>();
 
     // 기업 목록에 새로운 symbol 추가
     public void addSymbol(String symbol) {
-        if (!symbols.contains(symbol)) {
-            symbols.add(symbol);  // 중복되지 않으면 추가
+        // 이미 저장된 symbol이 없다면 API 호출로 기업명 가져오기
+        if (!symbolToNameMap.containsKey(symbol)) {
+            String shortName = fetchShortName(symbol);  // 기업명 가져오는 메소드
+            symbolToNameMap.put(symbol, shortName);  // 기업코드와 이름을 Map에 저장
         }
     }
 
     // 기업 목록에서 symbol 제거
     public void removeSymbol(String symbol) {
-        symbols.remove(symbol);
+        symbolToNameMap.remove(symbol);
     }
 
     // 저장된 기업 목록을 반환
-    public List<String> getSymbols() {
-        return new ArrayList<>(symbols);  // 변경 방지를 위해 복사본 반환
+    public Map<String, String> getSymbolsWithNames() {
+        return new HashMap<>(symbolToNameMap);  // Map을 복사해서 반환
     }
 
     // 초기 기업 목록으로 리셋하는 메소드
     public void resetSymbols() {
-        symbols.clear();  // 기존 목록을 초기화
-        // 유명한 10개 기업의 코드 예시
-        symbols.add("6758");
-        symbols.add("7203");
-        symbols.add("9984");
-        symbols.add("9432");
-        symbols.add("6861");
-        symbols.add("8035");
-        symbols.add("6954");
-        symbols.add("9983");
-        symbols.add("7733");
-        symbols.add("7267");
+        symbolToNameMap.clear();  // 기존 목록을 초기화
+        // 유명한 10개 기업의 코드와 이름 예시
+        symbolToNameMap.put("6758", "Sony Group Corporation");
+        symbolToNameMap.put("7203", "Toyota Motor Corporation");
+        symbolToNameMap.put("9984", "SoftBank Group Corp.");
+        symbolToNameMap.put("9432", "NTT DOCOMO, INC.");
+        symbolToNameMap.put("6861", "Keyence Corporation");
+        symbolToNameMap.put("8035", "Tokyo Electron Ltd.");
+        symbolToNameMap.put("6954", "Fanuc Corporation");
+        symbolToNameMap.put("9983", "Fast Retailing Co., Ltd.");
+        symbolToNameMap.put("7733", "Olympus Corporation");
+        symbolToNameMap.put("7267", "Honda Motor Co., Ltd.");
+    }
+
+    // 기업명(shortName)을 가져오는 메소드
+    private String fetchShortName(String symbol) {
+        String url = String.format("https://query2.finance.yahoo.com/v8/finance/chart/%s.T?interval=1d", symbol);
+        String response = restTemplate.getForObject(url, String.class);
+
+        FinancialResponse financialResponse = parseResponse(response);
+        return financialResponse.getChart().getResult().get(0).getMeta().getShortName();
+    }
+
+    private FinancialResponse parseResponse(String response) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(response, FinancialResponse.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

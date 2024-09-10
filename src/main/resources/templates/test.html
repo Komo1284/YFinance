@@ -31,33 +31,36 @@
 
         function addSymbol() {
             const symbol = document.getElementById('symbol').value;
-            if (symbol && !symbols.includes(symbol)) {
-                fetch(`/add-symbol?symbol=${symbol}`, { method: 'POST' });
-                symbols.push(symbol);
-                displaySymbols();
-                document.getElementById('symbol').value = '';
+            if (symbol && !symbols[symbol]) {
+                fetch(`/add-symbol?symbol=${symbol}`, { method: 'POST' })
+                    .then(() => {
+                        // 기업명과 기업코드를 함께 추가
+                        symbols[symbol] = symbol;
+                        displaySymbols();
+                        document.getElementById('symbol').value = '';
+                    });
             }
         }
 
-        function removeSymbol(index) {
-            const symbol = symbols[index];
-            fetch(`/remove-symbol?symbol=${symbol}`, { method: 'POST' });
-            symbols.splice(index, 1);
-            displaySymbols();
+        function removeSymbol(symbol) {
+            fetch(`/remove-symbol?symbol=${symbol}`, { method: 'POST' })
+                .then(() => {
+                    delete symbols[symbol];
+                    displaySymbols();
+                });
         }
 
         function displaySymbols() {
             const symbolList = document.getElementById('symbolList');
             symbolList.innerHTML = '';
-            symbols.forEach((symbol, index) => {
-                symbolList.innerHTML += `<li>${symbol} <button onclick="removeSymbol(${index})">Remove</button></li>`;
-            });
+            for (const [symbol, name] of Object.entries(symbols)) {
+                symbolList.innerHTML += `<li>${name} (${symbol}) <button onclick="removeSymbol('${symbol}')">Remove</button></li>`;
+            }
         }
 
-        // 새로운 리셋 기능을 추가
         function resetSymbols() {
             fetch("/reset-symbols", { method: 'POST' })
-                .then(() => fetchSavedSymbols()) // 초기 기업 목록을 불러와서 표시
+                .then(() => fetchSavedSymbols())
                 .catch(error => console.error('Error resetting symbols:', error));
         }
 
@@ -69,12 +72,13 @@
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
 
-            if (!startDate || !endDate || symbols.length === 0) {
+            if (!startDate || !endDate || Object.keys(symbols).length === 0) {
                 alert('모든 입력값을 채워주세요.');
                 return;
             }
 
-            const response = await fetch(`/financial-data?startDate=${new Date(startDate).getTime() / 1000}&endDate=${new Date(endDate).getTime() / 1000}&symbol=${symbols.join(',')}`);
+            const symbolList = Object.keys(symbols).join(',');
+            const response = await fetch(`/financial-data?startDate=${new Date(startDate).getTime() / 1000}&endDate=${new Date(endDate).getTime() / 1000}&symbol=${symbolList}`);
             const data = await response.json();
 
             if (response.ok) {
@@ -95,18 +99,18 @@
 
             data.forEach(entry => {
                 const row = `
-            <tr>
-                <td>${entry.date}</td>
-                <td>${entry.shortName}</td>
-                <td>${entry.open}</td>
-                <td>${entry.price10}</td>
-                <td>${entry.price11}</td>
-                <td>${entry.price13}</td>
-                <td>${entry.price14}</td>
-                <td>${entry.close}</td>
-                <td><textarea>메모</textarea></td>
-            </tr>
-        `;
+                    <tr>
+                        <td>${entry.date}</td>
+                        <td>${entry.shortName}</td>
+                        <td>${entry.open}</td>
+                        <td>${entry.price10}</td>
+                        <td>${entry.price11}</td>
+                        <td>${entry.price13}</td>
+                        <td>${entry.price14}</td>
+                        <td>${entry.close}</td>
+                        <td><textarea>메모</textarea></td>
+                    </tr>
+                `;
                 tableBody.innerHTML += row;
             });
         }

@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TimeZone;
+import java.util.*;
 
 @RestController
 @AllArgsConstructor
@@ -32,10 +29,10 @@ public class FinancialController {
         financialService.removeSymbol(symbol);
     }
 
-    // 저장된 기업 목록을 조회하는 API
+    // 저장된 기업 목록을 조회하는 API (기업명과 함께 반환)
     @GetMapping("/get-symbols")
-    public List<String> getSymbols() {
-        return financialService.getSymbols();
+    public Map<String, String> getSymbolsWithNames() {
+        return financialService.getSymbolsWithNames();
     }
 
     // 초기 기업 목록을 설정하는 리셋 API
