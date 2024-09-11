@@ -19,4 +19,9 @@ public class HomeController {
     public String test() {
         return "test";
     }
+
+    @GetMapping("/new")
+    public String new1() {
+        return "new";
+    }
 }
