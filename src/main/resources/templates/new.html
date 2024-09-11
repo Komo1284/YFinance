@@ -347,7 +347,7 @@
             const rows = Array.from(table.querySelectorAll('tr'));
 
             // 헤더와 데이터를 설정
-            const header = ["날짜", "기업명", "시가", "10:00", "11:00", "13:00", "14:00", "종가", "비고"];
+            const header = ["日付", "銘柄", "始値", "10:00", "11:00", "13:00", "14:00", "終値", "備考"];
             const excelData = rows.map(row => {
                 const tdCells = Array.from(row.querySelectorAll('td:not(:last-child)')); // 마지막 td를 제외
                 const inputCells = Array.from(row.querySelectorAll('input'));
@@ -904,7 +904,7 @@
 <!-- 로딩 상태 컨테이너 -->
 <div id="loading-container" style="display: none;">
     <div id="loading">
-        검색 중입니다...
+        検索中です。。。
     </div>
 </div>
 </body>
