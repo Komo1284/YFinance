@@ -14,6 +14,7 @@
             display: flex;
             justify-content: center;
         }
+
         .container {
             max-width: 1200px;
             width: 100%;
@@ -22,6 +23,7 @@
             flex-direction: column;
             gap: 20px;
         }
+
         h1 {
             background-color: #4a90e2;
             color: #fff;
@@ -30,17 +32,20 @@
             margin: 0;
             border-radius: 8px;
         }
+
         h2 {
             border-bottom: 2px solid #4a90e2;
             padding-bottom: 10px;
             margin: 20px 0;
             font-size: 1.5em;
         }
+
         .form-container {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
         }
+
         .symbol-section {
             background-color: #fff;
             padding: 20px;
@@ -49,16 +54,19 @@
             flex: 2;
             min-width: 300px;
         }
+
         .symbol-input-group {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
+
         .symbol-input-group input {
             padding: 10px;
             border-radius: 4px;
             border: 1px solid #ddd;
         }
+
         .symbol-input-group button {
             padding: 10px;
             border-radius: 4px;
@@ -66,20 +74,24 @@
             color: #fff;
             cursor: pointer;
         }
+
         .symbol-input-group button:hover {
             background-color: #357abd;
         }
+
         #symbolList {
             margin-top: 20px;
             max-height: 200px;
             overflow-y: auto;
         }
+
         #symbolList li {
             padding: 10px;
             border-bottom: 1px solid #ddd;
             display: flex;
             justify-content: space-between;
         }
+
         .reset-btn {
             background-color: #f44336;
             padding: 10px;
@@ -88,9 +100,11 @@
             cursor: pointer;
             margin-top: 10px;
         }
+
         .reset-btn:hover {
             background-color: #d32f2f;
         }
+
         .date-section {
             background-color: #fff;
             padding: 20px;
@@ -99,6 +113,7 @@
             flex: 1;
             min-width: 300px;
         }
+
         .date-section input {
             padding: 10px;
             border-radius: 4px;
@@ -106,6 +121,7 @@
             width: 94%;
             margin-bottom: 10px;
         }
+
         .date-section button {
             padding: 10px;
             border-radius: 4px;
@@ -115,9 +131,11 @@
             margin-top: 30px;
             width: 100%
         }
+
         .date-section button:hover {
             background-color: #357abd;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -133,16 +151,20 @@
             padding: 12px;
             text-align: center; /* 추가: 테이블 헤더와 데이터 셀도 명시적으로 가운데 정렬 */
         }
+
         th {
             background-color: #4a90e2;
             color: #fff;
         }
+
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
         tr:hover {
             background-color: #f1f1f1;
         }
+
         a {
             color: #000; /* 검정색 글씨로 설정 */
             text-decoration: none; /* 밑줄 제거 */
@@ -155,6 +177,7 @@
         a:hover {
             color: #666; /* 마우스를 올렸을 때 회색으로 변경 */
         }
+
         .export-btn {
             padding: 10px;
             border-radius: 4px;
@@ -162,9 +185,11 @@
             color: #fff;
             cursor: pointer;
         }
+
         .export-btn:hover {
             background-color: #357abd;
         }
+
         /* 기업 리스트 삭제 버튼 */
         /* 공통 버튼 스타일 */
         .symbol-input-group button {
@@ -196,6 +221,7 @@
         .symbol-input-group button.delete-btn:hover {
             background-color: #d32f2f; /* 삭제 버튼 hover 시 색상 */
         }
+
         /* 로딩 컨테이너 스타일 */
         #loading-container {
             position: fixed;
@@ -235,7 +261,7 @@
         function addSymbol() {
             const symbol = document.getElementById('symbol').value;
             if (symbol && !symbols[symbol]) {
-                fetch(`/add-symbol?symbol=${symbol}`, { method: 'POST' })
+                fetch(`/add-symbol?symbol=${symbol}`, {method: 'POST'})
                     .then(() => {
                         fetch(`/get-symbol-name?symbol=${symbol}`)
                             .then(response => response.text())
@@ -251,7 +277,7 @@
         function removeSymbol(symbol) {
             // 확인 대화상자를 띄우고, 사용자가 '확인'을 클릭한 경우에만 삭제를 진행합니다.
             if (confirm('本当にリストから削除しますか?')) {
-                fetch(`/remove-symbol?symbol=${symbol}`, { method: 'POST' })
+                fetch(`/remove-symbol?symbol=${symbol}`, {method: 'POST'})
                     .then(() => {
                         delete symbols[symbol];
                         displaySymbols();
@@ -270,7 +296,7 @@
 
         function resetSymbols() {
             if (confirm("本当に初期状態にリセットしますか?")) {  // 확인문구 추가
-                fetch("/reset-symbols", { method: 'POST' })
+                fetch("/reset-symbols", {method: 'POST'})
                     .then(() => fetchSavedSymbols())
                     .catch(error => console.error('Error resetting symbols:', error));
             }
@@ -326,18 +352,18 @@
                 const secUrl = `https://www.sbisec.co.jp/ETGate/?_ControlID=WPLETsiR001Control&_PageID=WPLETsiR001Idtl30&_DataStoreID=DSWPLETsiR001Control&_ActionID=DefaultAID&s_rkbn=2&s_btype=&i_stock_sec=${symbol}&i_dom_flg=1&i_exchange_code=JPN&i_output_type=2&exchange_code=TKY&stock_sec_code_mul=${symbol}&ref_from=1&ref_to=20&wstm4130_sort_id=&wstm4130_sort_kbn=&qr_keyword=1&qr_suggest=1&qr_sort=1`;
 
                 const row = `
-                    <tr>
-                        <td>${entry.date}</td>
-                        <td><a href="${secUrl}" target="_blank">${entry.shortName}</a></td>
-                        <td>${entry.open.toFixed(1)}</td>
-                        <td>${entry.price10.toFixed(1)}</td>
-                        <td>${entry.price11.toFixed(1)}</td>
-                        <td>${entry.price13.toFixed(1)}</td>
-                        <td>${entry.price14.toFixed(1)}</td>
-                        <td>${entry.close.toFixed(1)}</td>
-                        <td><input type="text" value=""></td>
-                    </tr>
-                `;
+                                <tr>
+                                    <td>${entry.date}</td>
+                                    <td><a href="${secUrl}" target="_blank">${entry.shortName}</a></td>
+                                    <td>${entry.open === 0.0 ? "---------" : entry.open.toFixed(1)}</td>
+                                    <td>${entry.price10 === 0.0 ? "---------" : entry.price10.toFixed(1)}</td>
+                                    <td>${entry.price11 === 0.0 ? "---------" : entry.price11.toFixed(1)}</td>
+                                    <td>${entry.price13 === 0.0 ? "---------" : entry.price13.toFixed(1)}</td>
+                                    <td>${entry.price14 === 0.0 ? "---------" : entry.price14.toFixed(1)}</td>
+                                    <td>${entry.close === 0.0 ? "---------" : entry.close.toFixed(1)}</td>
+                                    <td><input type="text" value=""></td>
+                                </tr>
+                            `;
                 tableBody.innerHTML += row;
             });
         }
@@ -362,34 +388,34 @@
 
             // 스타일 설정
             const headerStyle = {
-                fill: { fgColor: { rgb: "FFFFE0" } }, // 연한 노란색
-                font: { bold: true, color: { rgb: "000000" }, sz: 14 }, // 굵은 글씨, 글씨 크기 16
-                alignment: { horizontal: "center", vertical: "center" }, // 가운데 정렬
+                fill: {fgColor: {rgb: "FFFFE0"}}, // 연한 노란색
+                font: {bold: true, color: {rgb: "000000"}, sz: 14}, // 굵은 글씨, 글씨 크기 16
+                alignment: {horizontal: "center", vertical: "center"}, // 가운데 정렬
                 border: {
-                    top: { style: "thin", color: { rgb: "000000" } },
-                    bottom: { style: "thin", color: { rgb: "000000" } }
+                    top: {style: "thin", color: {rgb: "000000"}},
+                    bottom: {style: "thin", color: {rgb: "000000"}}
                 }
             };
             const dateStyle = {
-                fill: { fgColor: { rgb: "D3D3D3" } }, // 연회색
-                font: { bold: true, color: { rgb: "000000" } }, // 굵은 글씨
-                alignment: { horizontal: "center", vertical: "center" } // 가운데 정렬
+                fill: {fgColor: {rgb: "D3D3D3"}}, // 연회색
+                font: {bold: true, color: {rgb: "000000"}}, // 굵은 글씨
+                alignment: {horizontal: "center", vertical: "center"} // 가운데 정렬
             };
             const nameStyle = {
-                fill: { fgColor: { rgb: "ADD8E6" } }, // 연파란색
-                font: { bold: true, color: { rgb: "000000" } }, // 굵은 글씨
-                alignment: { horizontal: "center", vertical: "center" } // 가운데 정렬
+                fill: {fgColor: {rgb: "ADD8E6"}}, // 연파란색
+                font: {bold: true, color: {rgb: "000000"}}, // 굵은 글씨
+                alignment: {horizontal: "center", vertical: "center"} // 가운데 정렬
             };
             const generalStyle = {
-                alignment: { horizontal: "center", vertical: "center" } // 가운데 정렬
+                alignment: {horizontal: "center", vertical: "center"} // 가운데 정렬
             };
 
             // 열 너비 조정
-            ws['!cols'] = header.map((_, i) => ({ wpx: i === 1 ? 220 : 120 })); // 2열의 너비를 현재의 1.6배로 설정
+            ws['!cols'] = header.map((_, i) => ({wpx: i === 1 ? 220 : 120})); // 2열의 너비를 현재의 1.6배로 설정
 
             // 스타일 적용: 헤더
             for (let i = 0; i < header.length; i++) {
-                const cellAddress = { c: i, r: 0 }; // 첫 번째 행, 각 열
+                const cellAddress = {c: i, r: 0}; // 첫 번째 행, 각 열
                 const cellRef = XLSX.utils.encode_cell(cellAddress);
                 if (!ws[cellRef]) ws[cellRef] = {};
                 ws[cellRef].s = headerStyle; // 헤더 스타일 적용
@@ -397,8 +423,8 @@
 
             // 스타일 적용: 날짜와 기업명 열
             for (let r = 1; r < excelData.length; r++) { // 첫 번째 행(헤더)을 제외
-                const dateCellAddress = { c: 0, r: r }; // 첫 번째 열, 각 행
-                const nameCellAddress = { c: 1, r: r }; // 두 번째 열, 각 행
+                const dateCellAddress = {c: 0, r: r}; // 첫 번째 열, 각 행
+                const nameCellAddress = {c: 1, r: r}; // 두 번째 열, 각 행
                 const dateCellRef = XLSX.utils.encode_cell(dateCellAddress);
                 const nameCellRef = XLSX.utils.encode_cell(nameCellAddress);
                 if (!ws[dateCellRef]) ws[dateCellRef] = {};
@@ -410,7 +436,7 @@
             // 스타일 적용: 나머지 셀
             for (let r = 1; r < excelData.length; r++) { // 첫 번째 행(헤더)을 제외
                 for (let c = 2; c < header.length; c++) { // 데이터 열
-                    const cellAddress = { c: c, r: r };
+                    const cellAddress = {c: c, r: r};
                     const cellRef = XLSX.utils.encode_cell(cellAddress);
                     if (!ws[cellRef]) ws[cellRef] = {};
                     ws[cellRef].s = generalStyle; // 나머지 셀 스타일 적용
@@ -418,7 +444,7 @@
             }
 
             // 행 높이 조정: 헤더의 행 높이를 1.5배로 설정
-            ws['!rows'] = [{ hpx: 30 }]; // 헤더의 행 높이를 30px로 설정 (기본값보다 1.5배 높음)
+            ws['!rows'] = [{hpx: 30}]; // 헤더의 행 높이를 30px로 설정 (기본값보다 1.5배 높음)
 
             // 워크북 생성 및 시트 추가
             const wb = XLSX.utils.book_new();
@@ -456,6 +482,7 @@
                             display: flex;
                             justify-content: center;
                         }
+
                         .container {
                             max-width: 1200px;
                             width: 100%;
@@ -464,6 +491,7 @@
                             flex-direction: column;
                             gap: 20px;
                         }
+
                         h1 {
                             background-color: #4a90e2;
                             color: #fff;
@@ -472,17 +500,20 @@
                             margin: 0;
                             border-radius: 8px;
                         }
+
                         h2 {
                             border-bottom: 2px solid #4a90e2;
                             padding-bottom: 10px;
                             margin: 20px 0;
                             font-size: 1.5em;
                         }
+
                         .form-container {
                             display: flex;
                             flex-wrap: wrap;
                             gap: 20px;
                         }
+
                         .symbol-section {
                             background-color: #fff;
                             padding: 20px;
@@ -491,16 +522,19 @@
                             flex: 2;
                             min-width: 300px;
                         }
+
                         .symbol-input-group {
                             display: flex;
                             flex-direction: column;
                             gap: 10px;
                         }
+
                         .symbol-input-group input {
                             padding: 10px;
                             border-radius: 4px;
                             border: 1px solid #ddd;
                         }
+
                         /* 공통 버튼 스타일 */
                         .symbol-input-group button {
                             padding: 10px; /* 기본 패딩 */
@@ -531,17 +565,20 @@
                         .symbol-input-group button.delete-btn:hover {
                             background-color: #d32f2f; /* 삭제 버튼 hover 시 색상 */
                         }
+
                         #symbolList {
                             margin-top: 20px;
                             max-height: 200px;
                             overflow-y: auto;
                         }
+
                         #symbolList li {
                             padding: 10px;
                             border-bottom: 1px solid #ddd;
                             display: flex;
                             justify-content: space-between;
                         }
+
                         .reset-btn {
                             background-color: #f44336;
                             padding: 10px;
@@ -550,9 +587,11 @@
                             cursor: pointer;
                             margin-top: 10px;
                         }
+
                         .reset-btn:hover {
                             background-color: #d32f2f;
                         }
+
                         .date-section {
                             background-color: #fff;
                             padding: 20px;
@@ -561,6 +600,7 @@
                             flex: 1;
                             min-width: 300px;
                         }
+
                         .date-section input {
                             padding: 10px;
                             border-radius: 4px;
@@ -568,6 +608,7 @@
                             width: 94%;
                             margin-bottom: 10px;
                         }
+
                         .date-section button {
                             padding: 10px;
                             border-radius: 4px;
@@ -577,9 +618,11 @@
                             margin-top: 30px;
                             width: 100%
                         }
+
                         .date-section button:hover {
                             background-color: #357abd;
                         }
+
                         table {
                             width: 100%;
                             border-collapse: collapse;
@@ -589,23 +632,29 @@
                             overflow: hidden;
                             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                         }
+
                         table, th, td {
                             border: 1px solid #ddd;
                         }
+
                         th, td {
                             padding: 12px;
                             text-align: left;
                         }
+
                         th {
                             background-color: #4a90e2;
                             color: #fff;
                         }
+
                         tr:nth-child(even) {
                             background-color: #f9f9f9;
                         }
+
                         tr:hover {
                             background-color: #f1f1f1;
                         }
+
                         .export-btn {
                             padding: 10px;
                             border-radius: 4px;
@@ -613,6 +662,7 @@
                             color: #fff;
                             cursor: pointer;
                         }
+
                         .export-btn:hover {
                             background-color: #357abd;
                         }
@@ -631,7 +681,7 @@
                         function addSymbol() {
                             const symbol = document.getElementById('symbol').value;
                             if (symbol && !symbols[symbol]) {
-                                fetch(`/add-symbol?symbol=${symbol}`, { method: 'POST' })
+                                fetch(`/add-symbol?symbol=${symbol}`, {method: 'POST'})
                                     .then(() => {
                                         fetch(`/get-symbol-name?symbol=${symbol}`)
                                             .then(response => response.text())
@@ -645,7 +695,7 @@
                         }
 
                         function removeSymbol(symbol) {
-                            fetch(`/remove-symbol?symbol=${symbol}`, { method: 'POST' })
+                            fetch(`/remove-symbol?symbol=${symbol}`, {method: 'POST'})
                                 .then(() => {
                                     delete symbols[symbol];
                                     displaySymbols();
@@ -662,7 +712,7 @@
                         }
 
                         function resetSymbols() {
-                            fetch("/reset-symbols", { method: 'POST' })
+                            fetch("/reset-symbols", {method: 'POST'})
                                 .then(() => fetchSavedSymbols())
                                 .catch(error => console.error('Error resetting symbols:', error));
                         }
@@ -741,34 +791,34 @@
 
                             // 스타일 설정
                             const headerStyle = {
-                                fill: { fgColor: { rgb: "FFFFE0" } }, // 연한 노란색
-                                font: { bold: true, color: { rgb: "000000" }, sz: 14 }, // 굵은 글씨, 글씨 크기 16
-                                alignment: { horizontal: "center", vertical: "center" }, // 가운데 정렬
+                                fill: {fgColor: {rgb: "FFFFE0"}}, // 연한 노란색
+                                font: {bold: true, color: {rgb: "000000"}, sz: 14}, // 굵은 글씨, 글씨 크기 16
+                                alignment: {horizontal: "center", vertical: "center"}, // 가운데 정렬
                                 border: {
-                                    top: { style: "thin", color: { rgb: "000000" } },
-                                    bottom: { style: "thin", color: { rgb: "000000" } }
+                                    top: {style: "thin", color: {rgb: "000000"}},
+                                    bottom: {style: "thin", color: {rgb: "000000"}}
                                 }
                             };
                             const dateStyle = {
-                                fill: { fgColor: { rgb: "D3D3D3" } }, // 연회색
-                                font: { bold: true, color: { rgb: "000000" } }, // 굵은 글씨
-                                alignment: { horizontal: "center", vertical: "center" } // 가운데 정렬
+                                fill: {fgColor: {rgb: "D3D3D3"}}, // 연회색
+                                font: {bold: true, color: {rgb: "000000"}}, // 굵은 글씨
+                                alignment: {horizontal: "center", vertical: "center"} // 가운데 정렬
                             };
                             const nameStyle = {
-                                fill: { fgColor: { rgb: "ADD8E6" } }, // 연파란색
-                                font: { bold: true, color: { rgb: "000000" } }, // 굵은 글씨
-                                alignment: { horizontal: "center", vertical: "center" } // 가운데 정렬
+                                fill: {fgColor: {rgb: "ADD8E6"}}, // 연파란색
+                                font: {bold: true, color: {rgb: "000000"}}, // 굵은 글씨
+                                alignment: {horizontal: "center", vertical: "center"} // 가운데 정렬
                             };
                             const generalStyle = {
-                                alignment: { horizontal: "center", vertical: "center" } // 가운데 정렬
+                                alignment: {horizontal: "center", vertical: "center"} // 가운데 정렬
                             };
 
                             // 열 너비 조정
-                            ws['!cols'] = header.map((_, i) => ({ wpx: i === 1 ? 220 : 120 })); // 2열의 너비를 현재의 1.6배로 설정
+                            ws['!cols'] = header.map((_, i) => ({wpx: i === 1 ? 220 : 120})); // 2열의 너비를 현재의 1.6배로 설정
 
                             // 스타일 적용: 헤더
                             for (let i = 0; i < header.length; i++) {
-                                const cellAddress = { c: i, r: 0 }; // 첫 번째 행, 각 열
+                                const cellAddress = {c: i, r: 0}; // 첫 번째 행, 각 열
                                 const cellRef = XLSX.utils.encode_cell(cellAddress);
                                 if (!ws[cellRef]) ws[cellRef] = {};
                                 ws[cellRef].s = headerStyle; // 헤더 스타일 적용
@@ -776,8 +826,8 @@
 
                             // 스타일 적용: 날짜와 기업명 열
                             for (let r = 1; r < excelData.length; r++) { // 첫 번째 행(헤더)을 제외
-                                const dateCellAddress = { c: 0, r: r }; // 첫 번째 열, 각 행
-                                const nameCellAddress = { c: 1, r: r }; // 두 번째 열, 각 행
+                                const dateCellAddress = {c: 0, r: r}; // 첫 번째 열, 각 행
+                                const nameCellAddress = {c: 1, r: r}; // 두 번째 열, 각 행
                                 const dateCellRef = XLSX.utils.encode_cell(dateCellAddress);
                                 const nameCellRef = XLSX.utils.encode_cell(nameCellAddress);
                                 if (!ws[dateCellRef]) ws[dateCellRef] = {};
@@ -789,7 +839,7 @@
                             // 스타일 적용: 나머지 셀
                             for (let r = 1; r < excelData.length; r++) { // 첫 번째 행(헤더)을 제외
                                 for (let c = 2; c < header.length; c++) { // 데이터 열
-                                    const cellAddress = { c: c, r: r };
+                                    const cellAddress = {c: c, r: r};
                                     const cellRef = XLSX.utils.encode_cell(cellAddress);
                                     if (!ws[cellRef]) ws[cellRef] = {};
                                     ws[cellRef].s = generalStyle; // 나머지 셀 스타일 적용
@@ -797,7 +847,7 @@
                             }
 
                             // 행 높이 조정: 헤더의 행 높이를 1.5배로 설정
-                            ws['!rows'] = [{ hpx: 30 }]; // 헤더의 행 높이를 30px로 설정 (기본값보다 1.5배 높음)
+                            ws['!rows'] = [{hpx: 30}]; // 헤더의 행 높이를 30px로 설정 (기본값보다 1.5배 높음)
 
                             // 워크북 생성 및 시트 추가
                             const wb = XLSX.utils.book_new();
@@ -838,8 +888,11 @@
                         </div>
                     </div>
 
-                    <h2>検索結果 <button class="export-btn" onclick="exportToExcel()">Excelに変換</button></h2>
-                    <h4>まだ株式市場が終了していない時間の場合、表記された時間までデータが出力され、当日の終値が異常なデータが出力されることがあります。</h4>
+                    <h2>検索結果
+                        <button class="export-btn" onclick="exportToExcel()">Excelに変換</button>
+                    </h2>
+                    <h4>
+                        まだ株式市場が終了していない時間の場合、表記された時間までデータが出力され、当日の終値が異常なデータが出力されることがあります。</h4>
                     <table>
                         <thead>
                         <tr>
@@ -880,8 +933,11 @@
         </div>
     </div>
 
-    <h2>検索結果 <button class="export-btn" onclick="exportToExcel()">Excelに変換</button></h2>
-    <h4>まだ株式市場が終了していない時間の場合、表記された時間までデータが出力され、当日の終値が異常なデータが出力されることがあります。</h4>
+    <h2>検索結果
+        <button class="export-btn" onclick="exportToExcel()">Excelに変換</button>
+    </h2>
+    <h4>
+        まだ株式市場が終了していない時間の場合、表記された時間までデータが出力され、当日の終値が異常なデータが出力されることがあります。</h4>
     <table>
         <thead>
         <tr>
