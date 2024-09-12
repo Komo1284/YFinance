@@ -1,0 +1,241 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    max-width: 1200px;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+h1 {
+    background-color: #4a90e2;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    margin: 0;
+    border-radius: 8px;
+}
+
+h2 {
+    border-bottom: 2px solid #4a90e2;
+    padding-bottom: 10px;
+    margin: 20px 0;
+    font-size: 1.5em;
+}
+
+.form-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.symbol-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    flex: 2;
+    min-width: 300px;
+}
+
+.symbol-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.symbol-input-group input {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.symbol-input-group button {
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #4a90e2;
+    color: #fff;
+    cursor: pointer;
+}
+
+.symbol-input-group button:hover {
+    background-color: #357abd;
+}
+
+#symbolList {
+    margin-top: 20px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#symbolList li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+}
+
+.reset-btn {
+    background-color: #f44336;
+    padding: 10px;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.reset-btn:hover {
+    background-color: #d32f2f;
+}
+
+.date-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    min-width: 300px;
+}
+
+.date-section input {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    width: 94%;
+    margin-bottom: 10px;
+}
+
+.date-section button {
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #4a90e2;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 30px;
+    width: 100%
+}
+
+.date-section button:hover {
+    background-color: #357abd;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center; /* 추가: 테이블 전체 가운데 정렬 */
+}
+
+th, td {
+    padding: 12px;
+    text-align: center; /* 추가: 테이블 헤더와 데이터 셀도 명시적으로 가운데 정렬 */
+}
+
+th {
+    background-color: #4a90e2;
+    color: #fff;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+a {
+    color: #000; /* 검정색 글씨로 설정 */
+    text-decoration: none; /* 밑줄 제거 */
+}
+
+a:visited {
+    color: #000; /* 클릭 후에도 검정색 유지 */
+}
+
+a:hover {
+    color: #666; /* 마우스를 올렸을 때 회색으로 변경 */
+}
+
+.export-btn {
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #4a90e2;
+    color: #fff;
+    cursor: pointer;
+}
+
+.export-btn:hover {
+    background-color: #357abd;
+}
+
+/* 기업 리스트 삭제 버튼 */
+/* 공통 버튼 스타일 */
+.symbol-input-group button {
+    padding: 10px; /* 기본 패딩 */
+    border-radius: 4px; /* 둥근 모서리 */
+    color: white; /* 글씨 색상 */
+    border: none; /* 테두리 제거 */
+    cursor: pointer; /* 마우스 커서를 포인터로 변경 */
+    font-size: 0.9em; /* 버튼 글씨 크기 */
+    transition: background-color 0.3s ease; /* 배경색 변경 애니메이션 */
+}
+
+/* 추가 버튼 스타일 */
+.symbol-input-group button.add-btn {
+    background-color: #4a90e2; /* 추가 버튼의 원래 색상 */
+}
+
+.symbol-input-group button.add-btn:hover {
+    background-color: #357abd; /* 추가 버튼 hover 시 색상 */
+}
+
+/* 삭제 버튼 스타일 */
+.symbol-input-group button.delete-btn {
+    padding: 6px 12px; /* 삭제 버튼의 세로 길이를 조금 작게 설정 */
+    background-color: #f44336; /* 삭제 버튼 색상 */
+    color: white; /* 글씨 색상 */
+}
+
+.symbol-input-group button.delete-btn:hover {
+    background-color: #d32f2f; /* 삭제 버튼 hover 시 색상 */
+}
+
+/* 로딩 컨테이너 스타일 */
+#loading-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 반투명 검정 배경 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; /* 다른 요소들 위에 표시 */
+}
+
+/* 로딩 메시지 스타일 */
+#loading {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    color: #4a90e2;
+    font-size: 1.2em;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
