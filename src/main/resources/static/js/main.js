@@ -98,7 +98,7 @@ function displayData(data) {
     tableBody.innerHTML = '';
 
     if (!data || data.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="9">데이터가 없습니다</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="9">データがありません</td></tr>';
         return;
     }
 
@@ -106,19 +106,24 @@ function displayData(data) {
         const symbol = entry.symbol;
         const secUrl = `https://www.sbisec.co.jp/ETGate/?_ControlID=WPLETsiR001Control&_PageID=WPLETsiR001Idtl30&_DataStoreID=DSWPLETsiR001Control&_ActionID=DefaultAID&s_rkbn=2&s_btype=&i_stock_sec=${symbol}&i_dom_flg=1&i_exchange_code=JPN&i_output_type=2&exchange_code=TKY&stock_sec_code_mul=${symbol}&ref_from=1&ref_to=20&wstm4130_sort_id=&wstm4130_sort_kbn=&qr_keyword=1&qr_suggest=1&qr_sort=1`;
 
+        const createCell = (value, isNumeric) => {
+            const cellClass = value === '---------' ? 'center-align' : (isNumeric ? 'right-align' : 'center-align');
+            return `<td class="${cellClass}">${value}</td>`;
+        };
+
         const row = `
-                                <tr>
-                                    <td>${entry.date}</td>
-                                    <td><a href="${secUrl}" target="_blank">${entry.shortName}</a></td>
-                                    <td>${entry.open === 0.0 ? "---------" : entry.open.toFixed(1)}</td>
-                                    <td>${entry.price10 === 0.0 ? "---------" : entry.price10.toFixed(1)}</td>
-                                    <td>${entry.price11 === 0.0 ? "---------" : entry.price11.toFixed(1)}</td>
-                                    <td>${entry.price13 === 0.0 ? "---------" : entry.price13.toFixed(1)}</td>
-                                    <td>${entry.price14 === 0.0 ? "---------" : entry.price14.toFixed(1)}</td>
-                                    <td>${entry.close === 0.0 ? "---------" : entry.close.toFixed(1)}</td>
-                                    <td><input type="text" value=""></td>
-                                </tr>
-                            `;
+            <tr>
+                <td class="center-align">${entry.date}</td>
+                <td class="center-align"><a href="${secUrl}" target="_blank">${entry.shortName}</a></td>
+                ${createCell(entry.open === 0.0 ? "---------" : entry.open.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
+                ${createCell(entry.price10 === 0.0 ? "---------" : entry.price10.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
+                ${createCell(entry.price11 === 0.0 ? "---------" : entry.price11.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
+                ${createCell(entry.price13 === 0.0 ? "---------" : entry.price13.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
+                ${createCell(entry.price14 === 0.0 ? "---------" : entry.price14.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
+                ${createCell(entry.close === 0.0 ? "---------" : entry.close.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
+                <td><input type="text" value=""></td>
+            </tr>
+        `;
         tableBody.innerHTML += row;
     });
 }
@@ -161,8 +166,11 @@ function exportToExcel() {
         font: {bold: true, color: {rgb: "000000"}}, // 굵은 글씨
         alignment: {horizontal: "center", vertical: "center"} // 가운데 정렬
     };
-    const generalStyle = {
+    const centerAlignStyle = {
         alignment: {horizontal: "center", vertical: "center"} // 가운데 정렬
+    };
+    const rightAlignStyle = {
+        alignment: {horizontal: "right", vertical: "center"} // 우측 정렬
     };
 
     // 열 너비 조정
@@ -188,13 +196,19 @@ function exportToExcel() {
         ws[nameCellRef].s = nameStyle; // 기업명 열 스타일 적용
     }
 
-    // 스타일 적용: 나머지 셀
+    // 스타일 적용: 나머지 셀 (숫자 셀 우측 정렬)
     for (let r = 1; r < excelData.length; r++) { // 첫 번째 행(헤더)을 제외
         for (let c = 2; c < header.length; c++) { // 데이터 열
             const cellAddress = {c: c, r: r};
             const cellRef = XLSX.utils.encode_cell(cellAddress);
             if (!ws[cellRef]) ws[cellRef] = {};
-            ws[cellRef].s = generalStyle; // 나머지 셀 스타일 적용
+
+            // 숫자가 들어가는 열(시가, 10:00, 11:00, 13:00, 14:00, 종가)은 우측 정렬, 그 외는 가운데 정렬
+            if (c >= 2 && c <= 7) {
+                ws[cellRef].s = rightAlignStyle; // 숫자 열은 우측 정렬
+            } else {
+                ws[cellRef].s = centerAlignStyle; // 나머지는 가운데 정렬
+            }
         }
     }
 

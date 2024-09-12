@@ -239,3 +239,13 @@ a:hover {
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+/* 주가 데이터 우측 정렬을 위한 클래스 */
+.right-align {
+    text-align: right; /* 우측 정렬 */
+}
+
+/* 구분선과 같은 경우는 기본적으로 가운데 정렬 */
+.center-align {
+    text-align: center; /* 가운데 정렬 */
+}
