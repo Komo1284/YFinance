@@ -20,74 +20,7 @@
                 <input type="text" id="symbol" placeholder="例） 6701, 6758">
                 <button class="add-btn" type="submit" onclick="addSymbol()">追加</button>
             </div>
-            <ul id="symbolList"><!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Financial Data</title>
-                    <link rel="stylesheet" href="/css/list.css">
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-                    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.min.js"></script>
-                </head>
-                <body>
-                <script src="/js/list.js"></script>
-                <div class="container">
-                    <h1>株価検索データ V1.0</h1>
-
-                    <div class="form-container">
-                        <div class="symbol-section">
-                            <h2>検索する企業リスト</h2>
-                            <div class="symbol-input-group">
-                                <input type="text" id="symbol" placeholder="例） 6701, 6758">
-                                <button type="submit" onclick="addSymbol()">追加</button>
-                            </div>
-                            <ul id="symbolList">
-                                <!-- 추가된 기업 코드 목록 -->
-                            </ul>
-                            <button class="reset-btn" onclick="resetSymbols()">企業リストをリセットする</button>
-                        </div>
-
-                        <div class="date-section">
-                            <div>
-                                <label for="startDate">検索開始日　:</label>
-                                <input type="date" id="startDate">
-                            </div>
-                            <div>
-                                <label for="endDate">検索終了日 :</label>
-                                <input type="date" id="endDate">
-                            </div>
-                            <button type="submit" onclick="fetchFinancialData()">検索</button>
-                        </div>
-                    </div>
-
-                    <h2>検索結果
-                        <button class="export-btn" onclick="exportToExcel()">Excelに変換</button>
-                    </h2>
-                    <h4>
-                        まだ株式市場が終了していない時間の場合、表記された時間までデータが出力され、当日の終値が異常なデータが出力されることがあります。</h4>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>日付</th>
-                            <th>銘柄</th>
-                            <th>始値</th>
-                            <th>10:00</th>
-                            <th>11:00</th>
-                            <th>13:00</th>
-                            <th>14:00</th>
-                            <th>終値</th>
-                            <th>備考</th>
-                        </tr>
-                        </thead>
-                        <tbody id="financialData">
-                        <!-- 데이터가 여기 채워집니다 -->
-                        </tbody>
-                    </table>
-                </div>
-                </body>
-                </html>
-
+            <ul id="symbolList">
                 <!-- 추가된 기업 코드 목록 -->
             </ul>
             <button class="reset-btn" onclick="resetSymbols()">企業リストをリセットする</button>
@@ -110,7 +43,8 @@
         <button class="export-btn" onclick="exportToExcel()">Excelに変換</button>
     </h2>
     <h4>
-        まだ株式市場が終了していない時間の場合、表記された時間までデータが出力され、当日の終値が異常なデータが出力されることがあります。</h4>
+        まだ株式市場が終了していない時間の場合、表記された時間までデータが出力され、当日の終値が異常なデータが出力されることがあります。
+    </h4>
     <table>
         <thead>
         <tr>
@@ -130,6 +64,7 @@
         </tbody>
     </table>
 </div>
+
 <!-- 로딩 상태 컨테이너 -->
 <div id="loading-container" style="display: none;">
     <div id="loading">

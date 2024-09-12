@@ -3,7 +3,6 @@ package api.finance.service;
 import api.finance.dto.FinancialResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

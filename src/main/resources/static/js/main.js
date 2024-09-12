@@ -52,7 +52,14 @@ function resetSymbols() {
 
 window.onload = function () {
     fetchSavedSymbols();
+    setDefaultDates();
 };
+
+function setDefaultDates() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('startDate').value = today;
+    document.getElementById('endDate').value = today;
+}
 
 async function fetchFinancialData() {
     // 로딩 상태 표시
@@ -62,7 +69,7 @@ async function fetchFinancialData() {
     const endDate = document.getElementById('endDate').value;
 
     if (!startDate || !endDate || Object.keys(symbols).length === 0) {
-        alert('모든 입력값을 채워주세요.');
+        alert('すべての入力値を入力してください。');
         document.getElementById('loading-container').style.display = 'none'; // 로딩 상태 숨김
         return;
     }
@@ -75,11 +82,11 @@ async function fetchFinancialData() {
         if (response.ok) {
             displayData(data);
         } else {
-            alert('데이터를 가져오는 데 실패했습니다.');
+            alert('データの取得に失敗しました。');
         }
     } catch (error) {
         console.error('Error fetching data:', error);
-        alert('데이터를 가져오는 데 실패했습니다.');
+        alert('データの取得に失敗しました。');
     } finally {
         // 데이터 로딩 완료 후 로딩 상태 숨김
         document.getElementById('loading-container').style.display = 'none';
