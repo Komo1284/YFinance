@@ -41,6 +41,11 @@ public class FinancialController {
         return financialService.getSymbolsWithNames();
     }
 
+    @GetMapping("/get-japanese-name")
+    public String getJapaneseName(@RequestParam String symbol) {
+        return financialService.getJapaneseName(symbol);
+    }
+
     // 초기 기업 목록을 설정하는 리셋 API
     @PostMapping("/reset-symbols")
     public void resetSymbols() {

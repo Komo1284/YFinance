@@ -3,15 +3,27 @@ package api.finance.service;
 import api.finance.dto.FinancialResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @Service
 public class FinancialService {
 
     private final RestTemplate restTemplate = new RestTemplate();
+    private final Map<String, String> symbolToJapaneseNameMap = new HashMap<>();
 
     // 저장된 기업 목록을 반환
     // 서버 메모리에 기업 목록을 저장
@@ -96,6 +108,65 @@ public class FinancialService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    // 일본어 기업명 로딩 메서드
+    public void loadJapaneseNames() {
+        try {
+            // ClassPathResource로 resource/static 안에 있는 엑셀 파일을 읽음
+            ClassPathResource resource = new ClassPathResource("static/japanessCode.xlsx");
+            InputStream inputStream = resource.getInputStream();
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            Sheet sheet = workbook.getSheetAt(0);
+
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue; // 헤더 스킵
+
+                Cell codeCell = row.getCell(1);
+                Cell nameCell = row.getCell(2);
+
+                String code = getCellValueAsString(codeCell);
+                String japaneseName = getCellValueAsString(nameCell);
+
+                if (code != null && japaneseName != null) {
+                    symbolToJapaneseNameMap.put(code, japaneseName);
+                }
+            }
+
+            workbook.close();
+        } catch (IOException e) {
+            // 오류 로그 출력하고 예외를 throw하지 않음
+            System.err.println("Failed to load Japanese names from Excel: " + e.getMessage());
+        }
+    }
+
+    // 셀의 값을 문자열로 가져오는 유틸리티 메서드
+    private String getCellValueAsString(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                return String.valueOf((int) cell.getNumericCellValue());
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            case FORMULA:
+                return cell.getCellFormula();
+            default:
+                return null;
+        }
+    }
+
+    public String getJapaneseName(String symbol) {
+        return symbolToJapaneseNameMap.getOrDefault(symbol, "");
+    }
+
+    // 서버 시작 시 데이터 로드
+    @PostConstruct
+    public void init() {
+        loadJapaneseNames();
     }
 
 }

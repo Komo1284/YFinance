@@ -38,7 +38,12 @@ function displaySymbols() {
     const symbolList = document.getElementById('symbolList');
     symbolList.innerHTML = '';
     for (const [symbol, name] of Object.entries(symbols)) {
-        symbolList.innerHTML += `<li>${name} (${symbol}) <button class="delete-btn" onclick="removeSymbol('${symbol}')">削除</button></li>`;
+        // 영어 이름 대신 일본어 이름 사용
+        fetch(`/get-japanese-name?symbol=${symbol}`)
+            .then(response => response.text())
+            .then(japaneseName => {
+                symbolList.innerHTML += `<li>${japaneseName} (${symbol}) <button class="delete-btn" onclick="removeSymbol('${symbol}')">削除</button></li>`;
+            });
     }
 }
 
