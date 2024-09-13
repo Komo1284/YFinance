@@ -101,7 +101,11 @@ public class FinancialController {
 
                     dto = new FinancialDataDto();
                     dto.setDate(currentDate);
-                    dto.setShortName(financialResponse.getChart().getResult().get(0).getMeta().getShortName());
+
+                    // 기업명(shortName)을 일본어로 설정
+                    String japaneseName = financialService.getJapaneseName(sym);
+                    dto.setShortName(japaneseName.isEmpty() ? financialResponse.getChart().getResult().get(0).getMeta().getShortName() : japaneseName);
+
                     dto.setOpen(financialResponse.getChart().getResult().get(0).getIndicators().getQuote().get(0).getOpen().get(i));
                     dto.setSymbol(sym);
                     previousDate = currentDate;
