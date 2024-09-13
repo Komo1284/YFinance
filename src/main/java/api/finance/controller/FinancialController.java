@@ -6,6 +6,8 @@ import api.finance.service.FinancialService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
@@ -19,8 +21,13 @@ public class FinancialController {
     private final FinancialService financialService;
 
     @PostMapping("/add-symbol")
-    public void addSymbol(@RequestParam String symbol) {
-        financialService.addSymbol(symbol);
+    public ResponseEntity<String> addSymbol(@RequestParam String symbol) {
+        try {
+            financialService.addSymbol(symbol);
+            return ResponseEntity.ok("Symbol added successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping("/get-symbol-name")

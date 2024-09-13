@@ -10,6 +10,12 @@ function addSymbol() {
     const symbol = document.getElementById('symbol').value;
     if (symbol && !symbols[symbol]) {
         fetch(`/add-symbol?symbol=${symbol}`, {method: 'POST'})
+            .then(response => {
+                if (!response.ok) {  // 응답이 성공적이지 않으면 오류 메시지 처리
+                    return response.text().then(message => { throw new Error(message); });
+                }
+                return response.text();
+            })
             .then(() => {
                 fetch(`/get-symbol-name?symbol=${symbol}`)
                     .then(response => response.text())
@@ -18,6 +24,9 @@ function addSymbol() {
                         displaySymbols();
                         document.getElementById('symbol').value = '';
                     });
+            })
+            .catch(error => {
+                alert('存在しないコードです。\nもう一度コードを確認してください。');  // 오류 메시지를 사용자에게 알림창으로 표시
             });
     }
 }

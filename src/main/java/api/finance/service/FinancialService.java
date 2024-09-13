@@ -43,6 +43,12 @@ public class FinancialService {
         // 이미 저장된 symbol이 없다면 API 호출로 기업명 가져오기
         if (!symbolToNameMap.containsKey(symbol)) {
             String shortName = fetchShortName(symbol);  // 기업명 가져오는 메소드
+
+            // 유효하지 않은 symbol일 경우 예외 발생
+            if (shortName == null) {
+                throw new IllegalArgumentException("존재하지 않는 기업 코드입니다.");
+            }
+
             symbolToNameMap.put(symbol, shortName);  // 기업코드와 이름을 Map에 저장
         }
     }
@@ -92,11 +98,19 @@ public class FinancialService {
     }
 
     // 기업명(shortName)을 가져오는 메소드
+    // FinancialService 클래스의 fetchShortName 메서드 수정
     private String fetchShortName(String symbol) {
         String url = String.format("https://query2.finance.yahoo.com/v8/finance/chart/%s.T", symbol);
         String response = restTemplate.getForObject(url, String.class);
 
         FinancialResponse financialResponse = parseResponse(response);
+
+        // 유효하지 않은 symbol인 경우 null 반환
+        if (financialResponse == null || financialResponse.getChart().getResult().isEmpty() ||
+                financialResponse.getChart().getResult().get(0).getMeta().getShortName() == null) {
+            return null;
+        }
+
         return financialResponse.getChart().getResult().get(0).getMeta().getShortName();
     }
 
