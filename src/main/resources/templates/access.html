@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Access Code</title>
+  <link rel="stylesheet" href="/css/access.css">
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">EzFinance</div> <!-- 제목 추가 -->
+
+  <h1>接続コード入力</h1>
+  <form action="/verify" method="post">
+    <label for="code">コード:</label>
+    <input type="password" id="code" name="code" placeholder="コードを入力してください">
+    <button type="submit">接続</button>
+  </form>
+
+  <!-- 에러 메시지 출력 -->
+  <p class="error-message">
+    <span th:if="${error}" th:text="${error}"></span>
+  </p>
+</div>
+
+</body>
+</html>
