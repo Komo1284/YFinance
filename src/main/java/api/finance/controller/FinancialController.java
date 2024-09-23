@@ -120,18 +120,22 @@ public class FinancialController {
 
                 // 시간대별 가격 설정
                 String timeString = new SimpleDateFormat("HH:mm").format(date);
-                if (timeString.equals("01:00")) {
+//                if (timeString.equals("01:00")) {
+                if (timeString.equals("10:00")) {
                     dto.setPrice10(findPriceAtTime(financialResponse, i));
-                } else if (timeString.equals("02:00")) {
+//                } else if (timeString.equals("02:00")) {
+                } else if (timeString.equals("11:00")) {
                     dto.setPrice11(findPriceAtTime(financialResponse, i));
-                } else if (timeString.equals("04:00")) {
+//                } else if (timeString.equals("04:00")) {
+                } else if (timeString.equals("13:00")) {
                     dto.setPrice13(findPriceAtTime(financialResponse, i));
-                } else if (timeString.equals("05:00")) {
+//                } else if (timeString.equals("05:00")) {
+                } else if (timeString.equals("14:00")) {
                     dto.setPrice14(findPriceAtTime(financialResponse, i));
                 }
 
                 // 종료 시간대의 종가 설정
-                if (isEndOfDay(financialResponse, i, currentDate, endDate * 1000)) {
+                if (isEndOfDay(financialResponse, i, currentDate, endDate * 1000) && isAfterMarketClose()) {
                     dto.setClose(financialResponse.getChart().getResult().get(0).getIndicators().getQuote().get(0).getClose().get(i));
                 }
             }
@@ -148,6 +152,16 @@ public class FinancialController {
         }
 
         return result;
+    }
+
+    // 장 종료 시간(오후 3시) 이후인지 확인하는 메서드
+    private boolean isAfterMarketClose() {
+        Calendar now = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"));
+        int hour = now.get(Calendar.HOUR_OF_DAY);
+        int minute = now.get(Calendar.MINUTE);
+
+        // 오후 3시(15:00) 이후인지 확인
+        return hour > 15 || (hour == 15 && minute > 0);
     }
 
     // DTO의 중간 값이 모두 0인지 확인
