@@ -135,7 +135,7 @@ function displayData(data) {
                 ${createCell(entry.price13 === 0.0 ? "---------" : entry.price13.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
                 ${createCell(entry.price14 === 0.0 ? "---------" : entry.price14.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
                 ${createCell(entry.close === 0.0 ? "---------" : entry.close.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
-                <td><input type="text" value=""></td>
+                <td style="height: 30px; vertical-align: middle;"><input type="text" class="memo-input"></td>
             </tr>
         `;
         tableBody.innerHTML += row;

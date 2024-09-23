@@ -141,8 +141,10 @@ table {
 }
 
 th, td {
-    padding: 12px;
-    text-align: center; /* 추가: 테이블 헤더와 데이터 셀도 명시적으로 가운데 정렬 */
+    padding: 10px; /* 셀의 패딩을 0으로 설정 */
+    border: none; /* 테두리 제거 또는 최소화 */
+    vertical-align: middle; /* 입력창을 셀의 가운데에 정렬 */
+    position: relative; /* 상대적인 위치 설정 */
 }
 
 th {
@@ -248,4 +250,22 @@ a:hover {
 /* 구분선과 같은 경우는 기본적으로 가운데 정렬 */
 .center-align {
     text-align: center; /* 가운데 정렬 */
+}
+
+/* 메모란 입력창 스타일 */
+.memo-input {
+    width: 90%; /* 입력창의 너비를 셀 너비에 맞춤 */
+    height: 105%; /* 입력창의 높이를 셀 높이에 맞춤 */
+    padding: 0; /* 입력창의 내부 패딩 제거 */
+    margin: 0; /* 입력창의 외부 여백 제거 */
+    box-sizing: border-box; /* 패딩과 테두리를 포함한 크기 계산 */
+    resize: none; /* 사용자가 크기를 조절하지 못하도록 설정 */
+    overflow: hidden; /* 내용이 넘치지 않도록 설정 */
+}
+
+.warning-message {
+    color: #d9534f; /* 빨간색 텍스트 */
+    margin-left: 10px; /* 버튼과의 간격 */
+    font-size: 0.9em; /* 폰트 크기 조절 */
+    font-weight: bold; /* 굵은 텍스트 */
 }
