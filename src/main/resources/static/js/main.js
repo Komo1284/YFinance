@@ -233,6 +233,11 @@ function exportToExcel() {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Financial Data');
 
+    // 오늘 날짜를 YYYYMMDD 형식으로 가져오기
+    const today = new Date();
+    const formattedDate = today.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD 형식으로 변환
+    const fileName = `${formattedDate}_株価.xlsx`; // 파일명 생성
+
     // 엑셀 파일 다운로드
-    XLSX.writeFile(wb, 'financial_data.xlsx');
+    XLSX.writeFile(wb, fileName);
 }
