@@ -120,17 +120,17 @@ public class FinancialController {
 
                 // 시간대별 가격 설정
                 String timeString = new SimpleDateFormat("HH:mm").format(date);
-//                if (timeString.equals("01:00")) {
-                if (timeString.equals("10:00")) {
+                if (timeString.equals("01:00")) {
+//                if (timeString.equals("10:00")) {
                     dto.setPrice10(findPriceAtTime(financialResponse, i));
-//                } else if (timeString.equals("02:00")) {
-                } else if (timeString.equals("11:00")) {
+                } else if (timeString.equals("02:00")) {
+//                } else if (timeString.equals("11:00")) {
                     dto.setPrice11(findPriceAtTime(financialResponse, i));
-//                } else if (timeString.equals("04:00")) {
-                } else if (timeString.equals("13:00")) {
+                } else if (timeString.equals("04:00")) {
+//                } else if (timeString.equals("13:00")) {
                     dto.setPrice13(findPriceAtTime(financialResponse, i));
-//                } else if (timeString.equals("05:00")) {
-                } else if (timeString.equals("14:00")) {
+                } else if (timeString.equals("05:00")) {
+//                } else if (timeString.equals("14:00")) {
                     dto.setPrice14(findPriceAtTime(financialResponse, i));
                 }
 
