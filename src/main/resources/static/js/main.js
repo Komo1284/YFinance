@@ -67,6 +67,7 @@ function resetSymbols() {
 window.onload = function () {
     fetchSavedSymbols();
     setDefaultDates();
+    loadMemo(); // 메모를 불러오는 함수 호출
 };
 
 function setDefaultDates() {
@@ -240,4 +241,64 @@ function exportToExcel() {
 
     // 엑셀 파일 다운로드
     XLSX.writeFile(wb, fileName);
+}
+
+let memoContent = ""; // 메모 내용 저장 변수
+
+// 페이지 로드 시 서버에서 메모를 불러오는 함수
+async function loadMemo() {
+    try {
+        const response = await fetch("/memo/get");
+        if (response.ok) {
+            memoContent = await response.text();
+            document.getElementById('memoDisplay').innerText = memoContent || "メモがありません。";
+        } else {
+            console.error("メモを取得できませんでした。");
+        }
+    } catch (error) {
+        console.error("Error loading memo:", error);
+    }
+}
+
+// 메모를 저장하는 함수
+async function saveMemo() {
+    const memoTextarea = document.getElementById('memoTextarea');
+    memoContent = memoTextarea.value;
+
+    // 서버에 메모 저장 요청
+    try {
+        const response = await fetch(`/memo/save?memo=${encodeURIComponent(memoContent)}`, {
+            method: 'POST'
+        });
+        if (response.ok) {
+            document.getElementById('memoDisplay').innerText = memoContent || "メモがありません。";
+            toggleMemoEdit();
+        } else {
+            alert("メモの保存に失敗しました。");
+        }
+    } catch (error) {
+        console.error("메모 저장 실패:", error);
+        alert("メモの保存に失敗しました。");
+    }
+}
+
+// 메모 표시 및 수정 버튼 토글 함수
+function toggleMemoEdit() {
+    const memoDisplay = document.getElementById('memoDisplay');
+    const memoTextarea = document.getElementById('memoTextarea');
+    const editMemoBtn = document.getElementById('editMemoBtn');
+    const saveMemoBtn = document.getElementById('saveMemoBtn');
+
+    if (memoTextarea.style.display === 'none') {
+        memoTextarea.value = memoContent;
+        memoTextarea.style.display = 'block';
+        saveMemoBtn.style.display = 'inline';
+        memoDisplay.style.display = 'none';
+        editMemoBtn.style.display = 'none';
+    } else {
+        memoTextarea.style.display = 'none';
+        saveMemoBtn.style.display = 'none';
+        memoDisplay.style.display = 'block';
+        editMemoBtn.style.display = 'inline';
+    }
 }
