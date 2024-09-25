@@ -118,7 +118,7 @@ public class FinancialController {
                     previousDate = currentDate;
                 }
 
-                // 시간대별 가격 설정 (서버 시간대)
+                // 시간대별 가격 설정 (서버 시간대 - 배포시)
                 String timeString = new SimpleDateFormat("HH:mm").format(date);
                 if (timeString.equals("01:00")) {
                     dto.setPrice10(findPriceAtTime(financialResponse, i));
