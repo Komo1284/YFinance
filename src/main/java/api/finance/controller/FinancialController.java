@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
+import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -74,13 +74,13 @@ public class FinancialController {
 
         // 현재 날짜 타임스탬프를 얻음
         long currentDateTimestamp = System.currentTimeMillis() / 1000;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
 
         for (String sym : symbols) {
             String response = financialService.fetchData(sym, startDate, endDate);
             FinancialResponse financialResponse = parseResponse(response);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Tokyo"));
             String previousDate = "";
             FinancialDataDto dto = null;
 
@@ -120,23 +120,29 @@ public class FinancialController {
 
                 // 시간대별 가격 설정
                 String timeString = new SimpleDateFormat("HH:mm").format(date);
-                if (timeString.equals("01:00")) {
-//                if (timeString.equals("10:00")) {
+                if (timeString.equals("10:00")) {
                     dto.setPrice10(findPriceAtTime(financialResponse, i));
-                } else if (timeString.equals("02:00")) {
-//                } else if (timeString.equals("11:00")) {
+                } else if (timeString.equals("11:00")) {
                     dto.setPrice11(findPriceAtTime(financialResponse, i));
-                } else if (timeString.equals("04:00")) {
-//                } else if (timeString.equals("13:00")) {
+                } else if (timeString.equals("13:00")) {
                     dto.setPrice13(findPriceAtTime(financialResponse, i));
-                } else if (timeString.equals("05:00")) {
-//                } else if (timeString.equals("14:00")) {
+                } else if (timeString.equals("14:00")) {
                     dto.setPrice14(findPriceAtTime(financialResponse, i));
                 }
 
-                // 종료 시간대의 종가 설정
-                if (isEndOfDay(financialResponse, i, currentDate, endDate * 1000) && isAfterMarketClose()) {
-                    dto.setClose(financialResponse.getChart().getResult().get(0).getIndicators().getQuote().get(0).getClose().get(i));
+                // 현재 날짜와 이전 날짜를 구분하여 종가 설정
+                if (currentDate.equals(sdf.format(new Date()))) {  // 현재 날짜일 때
+                    // 오후 3시 이전인지 확인하고 종가를 출력하지 않음
+                    Calendar now = Calendar.getInstance(TimeZone.getTimeZone("Asia/Tokyo"));
+                    int hour = now.get(Calendar.HOUR_OF_DAY);
+                    if (hour >= 15 && isEndOfDay(financialResponse, i, currentDate, endDate * 1000)) {
+                        dto.setClose(financialResponse.getChart().getResult().get(0).getIndicators().getQuote().get(0).getClose().get(i));
+                    }
+                } else {  // 과거 날짜일 때
+                    // 정상적으로 종가를 설정
+                    if (isEndOfDay(financialResponse, i, currentDate, endDate * 1000)) {
+                        dto.setClose(financialResponse.getChart().getResult().get(0).getIndicators().getQuote().get(0).getClose().get(i));
+                    }
                 }
             }
 
