@@ -1,9 +1,20 @@
 let symbols = [];
 
 async function fetchSavedSymbols() {
-    const response = await fetch("/get-symbols");
-    symbols = await response.json();
-    displaySymbols();
+    try {
+        const response = await fetch("/get-symbols");
+        symbols = await response.json();
+
+        // 서버에서 받은 symbols가 객체인 경우, 객체의 키(증권 코드)를 정렬
+        if (symbols && typeof symbols === 'object') {
+            // symbols를 숫자 기준으로 정렬된 배열로 변환
+            const sortedSymbols = Object.keys(symbols).sort((a, b) => Number(a) - Number(b));
+
+            displaySymbols(sortedSymbols);  // 정렬된 심볼 리스트를 넘김
+        }
+    } catch (error) {
+        console.error("Error fetching symbols:", error);
+    }
 }
 
 function addSymbol() {
@@ -17,13 +28,9 @@ function addSymbol() {
                 return response.text();
             })
             .then(() => {
-                fetch(`/get-symbol-name?symbol=${symbol}`)
-                    .then(response => response.text())
-                    .then(name => {
-                        symbols[symbol] = name;
-                        displaySymbols();
-                        document.getElementById('symbol').value = '';
-                    });
+                // 추가 후 즉시 리스트를 다시 불러오기
+                fetchSavedSymbols();
+                document.getElementById('symbol').value = '';  // 입력 필드를 초기화
             })
             .catch(error => {
                 alert('存在しないコードです。\nもう一度コードを確認してください。');  // 오류 메시지를 사용자에게 알림창으로 표시
@@ -36,24 +43,30 @@ function removeSymbol(symbol) {
     if (confirm('本当にリストから削除しますか?')) {
         fetch(`/remove-symbol?symbol=${symbol}`, {method: 'POST'})
             .then(() => {
-                delete symbols[symbol];
-                displaySymbols();
+                // 삭제 후 즉시 리스트를 다시 불러오기
+                fetchSavedSymbols();
             })
             .catch(error => console.error('Error removing symbol:', error));
     }
 }
 
-function displaySymbols() {
+async function displaySymbols(sortedSymbols) {
     const symbolList = document.getElementById('symbolList');
     symbolList.innerHTML = '';
-    for (const [symbol, name] of Object.entries(symbols)) {
-        // 영어 이름 대신 일본어 이름 사용
-        fetch(`/get-japanese-name?symbol=${symbol}`)
+
+    const symbolPromises = sortedSymbols.map(symbol => {
+        return fetch(`/get-japanese-name?symbol=${symbol}`)
             .then(response => response.text())
             .then(japaneseName => {
-                symbolList.innerHTML += `<li>${japaneseName} (${symbol}) <button class="delete-btn" onclick="removeSymbol('${symbol}')">削除</button></li>`;
+                return {symbol, japaneseName};
             });
-    }
+    });
+
+    // 모든 심볼의 정보를 가져온 후에 한 번에 렌더링
+    const symbolData = await Promise.all(symbolPromises);
+    symbolData.forEach(({symbol, japaneseName}) => {
+        symbolList.innerHTML += `<li>${japaneseName} (${symbol}) <button class="delete-btn" onclick="removeSymbol('${symbol}')">削除</button></li>`;
+    });
 }
 
 function resetSymbols() {

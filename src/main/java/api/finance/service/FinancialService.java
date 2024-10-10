@@ -36,7 +36,7 @@ public class FinancialService {
     }
 
     /// 기업 코드와 이름을 저장하는 Map
-    private Map<String, String> symbolToNameMap = new HashMap<>();
+    private Map<String, String> symbolToNameMap = new LinkedHashMap<>();
 
     // 기업 목록에 새로운 symbol 추가
     public void addSymbol(String symbol) {
@@ -64,7 +64,9 @@ public class FinancialService {
 
     // 저장된 기업 목록을 반환
     public Map<String, String> getSymbolsWithNames() {
-        return new HashMap<>(symbolToNameMap);  // Map을 복사해서 반환
+        return symbolToNameMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey(Comparator.comparingInt(Integer::parseInt)))  // 키(심볼)를 숫자 순으로 정렬
+                .collect(LinkedHashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue()), Map::putAll);
     }
 
     // 초기 기업 목록으로 리셋하는 메소드
