@@ -70,7 +70,7 @@ async function displaySymbols(sortedSymbols) {
 }
 
 function resetSymbols() {
-    if (confirm("本当に初期状態にリセットしますか?")) {  // 확인문구 추가
+    if (confirm("初期状態にリセットしても宜しいですか？")) {  // 확인문구 추가
         fetch("/reset-symbols", {method: 'POST'})
             .then(() => fetchSavedSymbols())
             .catch(error => console.error('Error resetting symbols:', error));
@@ -131,7 +131,7 @@ function displayData(data) {
     }
 
     data.forEach(entry => {
-        const symbol = entry.symbol;
+        const symbol = entry.symbol;  // 증권코드
         const secUrl = `https://www.sbisec.co.jp/ETGate/?_ControlID=WPLETsiR001Control&_PageID=WPLETsiR001Idtl30&_DataStoreID=DSWPLETsiR001Control&_ActionID=DefaultAID&s_rkbn=2&s_btype=&i_stock_sec=${symbol}&i_dom_flg=1&i_exchange_code=JPN&i_output_type=2&exchange_code=TKY&stock_sec_code_mul=${symbol}&ref_from=1&ref_to=20&wstm4130_sort_id=&wstm4130_sort_kbn=&qr_keyword=1&qr_suggest=1&qr_sort=1`;
 
         const createCell = (value, isNumeric) => {
@@ -139,10 +139,14 @@ function displayData(data) {
             return `<td class="${cellClass}">${value}</td>`;
         };
 
+
+        // symbol이 null이면 shortName만, 그렇지 않으면 shortName (symbol) 형식으로 표시
+        const companyNameWithSymbol = symbol ? `${entry.shortName} (${symbol})` : entry.shortName;
+
         const row = `
             <tr>
                 <td class="center-align">${entry.date}</td>
-                <td class="center-align"><a href="${secUrl}" target="_blank">${entry.shortName}</a></td>
+                <td class="center-align"><a href="${secUrl}" target="_blank">${companyNameWithSymbol}</a></td>  <!-- 기업명(증권코드) -->
                 ${createCell(entry.open === 0.0 ? "---------" : entry.open.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
                 ${createCell(entry.price10 === 0.0 ? "---------" : entry.price10.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
                 ${createCell(entry.price11 === 0.0 ? "---------" : entry.price11.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
