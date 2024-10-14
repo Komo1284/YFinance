@@ -185,4 +185,18 @@ public class FinancialService {
         loadJapaneseNames();
     }
 
+    public List<Map<String, String>> searchSymbols(String query) {
+        List<Map<String, String>> matchedSymbols = new ArrayList<>();
+
+        // 기업명 또는 증권코드에 query가 포함된 항목만 필터링
+        for (Map.Entry<String, String> entry : symbolToJapaneseNameMap.entrySet()) {
+            if (entry.getKey().contains(query) || entry.getValue().contains(query)) {
+                Map<String, String> symbolInfo = new HashMap<>();
+                symbolInfo.put("symbol", entry.getKey());
+                symbolInfo.put("japaneseName", entry.getValue());
+                matchedSymbols.add(symbolInfo);
+            }
+        }
+        return matchedSymbols;
+    }
 }

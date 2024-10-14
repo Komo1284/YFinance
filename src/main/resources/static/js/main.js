@@ -315,3 +315,38 @@ function toggleMemoEdit() {
         editMemoBtn.style.display = 'inline';
     }
 }
+
+async function fetchMatchingSymbols(query) {
+    if (query.length < 2) {
+        clearAutocomplete(); // 입력이 2글자 이하일 때 자동완성 리스트를 숨김
+        return;
+    }
+
+    try {
+        const response = await fetch(`/search-symbol?query=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        displayAutocomplete(data);
+    } catch (error) {
+        console.error("Error fetching matching symbols:", error);
+    }
+}
+
+function displayAutocomplete(symbols) {
+    clearAutocomplete(); // 기존 자동완성 리스트 제거
+
+    const autocompleteList = document.getElementById('autocomplete-list');
+    symbols.forEach(symbol => {
+        const item = document.createElement("div");
+        item.innerHTML = `${symbol.japaneseName} (${symbol.symbol})`;
+        item.addEventListener("click", function() {
+            document.getElementById('symbol').value = `${symbol.japaneseName} (${symbol.symbol})`;
+            clearAutocomplete();
+        });
+        autocompleteList.appendChild(item);
+    });
+}
+
+function clearAutocomplete() {
+    const autocompleteList = document.getElementById('autocomplete-list');
+    autocompleteList.innerHTML = ''; // 리스트 초기화
+}

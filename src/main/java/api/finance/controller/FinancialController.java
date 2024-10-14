@@ -242,4 +242,10 @@ public class FinancialController {
             return null;
         }
     }
+
+    @GetMapping("/search-symbol")
+    @ResponseBody
+    public List<Map<String, String>> searchSymbols(@RequestParam String query) {
+        return financialService.searchSymbols(query);
+    }
 }
