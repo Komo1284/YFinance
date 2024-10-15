@@ -188,12 +188,18 @@ public class FinancialService {
     public List<Map<String, String>> searchSymbols(String query) {
         List<Map<String, String>> matchedSymbols = new ArrayList<>();
 
-        // 기업명 또는 증권코드에 query가 포함된 항목만 필터링
+        // 입력된 query를 소문자로 변환
+        String lowerCaseQuery = query.toLowerCase();
+
+        // 기업명 또는 증권코드를 소문자로 변환한 후 비교
         for (Map.Entry<String, String> entry : symbolToJapaneseNameMap.entrySet()) {
-            if (entry.getKey().contains(query) || entry.getValue().contains(query)) {
+            String lowerCaseKey = entry.getKey().toLowerCase();   // 증권코드를 소문자로 변환
+            String lowerCaseValue = entry.getValue().toLowerCase();  // 기업명을 소문자로 변환
+
+            if (lowerCaseKey.contains(lowerCaseQuery) || lowerCaseValue.contains(lowerCaseQuery)) {
                 Map<String, String> symbolInfo = new HashMap<>();
-                symbolInfo.put("symbol", entry.getKey());
-                symbolInfo.put("japaneseName", entry.getValue());
+                symbolInfo.put("symbol", entry.getKey());  // 원래의 증권코드 사용
+                symbolInfo.put("japaneseName", entry.getValue());  // 원래의 기업명 사용
                 matchedSymbols.add(symbolInfo);
             }
         }
