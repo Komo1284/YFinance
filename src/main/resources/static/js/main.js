@@ -527,3 +527,81 @@ function clearAutocomplete() {
     const autocompleteList = document.getElementById('autocomplete-list');
     autocompleteList.innerHTML = '';
 }
+
+function exportToExcel() {
+    const table = document.getElementById('financialData');
+    const rows = Array.from(table.querySelectorAll('tr'));
+
+    // 테이블의 헤더 및 데이터를 추출
+    const header = ["日付", "銘柄", "始値", "10:00", "11:00", "13:00", "14:00", "終値", "備考"];
+    const excelData = rows.map(row => {
+        const tdCells = Array.from(row.querySelectorAll('td:not(:last-child)')); // 마지막 td 제외
+        const inputCells = Array.from(row.querySelectorAll('input')); // 메모 입력 필드 포함
+        const tdValues = tdCells.map(td => td.innerText.trim()); // 셀 데이터
+        const inputValues = inputCells.map(input => input.value.trim()); // 입력 필드 데이터 (메모)
+        return [...tdValues, ...inputValues];
+    });
+
+    excelData.unshift(header); // 헤더 추가
+
+    // 엑셀 워크시트 생성
+    const ws = XLSX.utils.aoa_to_sheet(excelData);
+
+    // 스타일 설정
+    const headerStyle = {
+        fill: {fgColor: {rgb: "FFFFE0"}}, // 연한 노란색
+        font: {bold: true, color: {rgb: "000000"}, sz: 14}, // 굵은 글씨, 글씨 크기 16
+        alignment: {horizontal: "center", vertical: "center"}, // 가운데 정렬
+        border: {
+            top: {style: "thin", color: {rgb: "000000"}},
+            bottom: {style: "thin", color: {rgb: "000000"}}
+        }
+    };
+
+    const rightAlignStyle = {
+        alignment: {horizontal: "right", vertical: "center"} // 우측 정렬
+    };
+
+    const centerAlignStyle = {
+        alignment: {horizontal: "center", vertical: "center"} // 가운데 정렬
+    };
+
+    // 열 너비 조정
+    ws['!cols'] = header.map((_, i) => ({wpx: i === 1 ? 220 : 120})); // 2열의 너비를 조정
+
+    // 스타일 적용: 헤더
+    for (let i = 0; i < header.length; i++) {
+        const cellAddress = {c: i, r: 0}; // 첫 번째 행, 각 열
+        const cellRef = XLSX.utils.encode_cell(cellAddress);
+        if (!ws[cellRef]) ws[cellRef] = {};
+        ws[cellRef].s = headerStyle; // 헤더 스타일 적용
+    }
+
+    // 데이터의 정렬 및 스타일 적용
+    for (let r = 1; r < excelData.length; r++) { // 첫 번째 행(헤더)을 제외
+        for (let c = 2; c < header.length; c++) { // 데이터 열
+            const cellAddress = {c: c, r: r};
+            const cellRef = XLSX.utils.encode_cell(cellAddress);
+            if (!ws[cellRef]) ws[cellRef] = {};
+
+            // 숫자가 들어가는 열(시가, 10:00, 11:00 등)은 우측 정렬, 나머지는 가운데 정렬
+            if (c >= 2 && c <= 7) {
+                ws[cellRef].s = rightAlignStyle; // 숫자 열은 우측 정렬
+            } else {
+                ws[cellRef].s = centerAlignStyle; // 나머지는 가운데 정렬
+            }
+        }
+    }
+
+    // 워크북 생성 및 시트 추가
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Financial Data');
+
+    // 오늘 날짜를 YYYYMMDD 형식으로 가져오기
+    const today = new Date();
+    const formattedDate = today.toISOString().slice(0, 10).replace(/-/g, ''); // YYYYMMDD 형식으로 변환
+    const fileName = `${formattedDate}_FinancialData.xlsx`; // 파일명 생성
+
+    // 엑셀 파일 다운로드
+    XLSX.writeFile(wb, fileName);
+}
