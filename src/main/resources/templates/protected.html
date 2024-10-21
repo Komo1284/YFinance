@@ -43,13 +43,6 @@
             </div>
             <button type="submit" onclick="fetchFinancialData()">検索</button>
 
-            <!-- 메모 표시 섹션 추가 -->
-            <div class="memo-section">
-                <p id="memoDisplay">メモがありません。</p>
-                <button id="editMemoBtn" onclick="toggleMemoEdit()">メモを修正</button>
-                <textarea id="memoTextarea" style="display: none;"></textarea>
-                <button id="saveMemoBtn" style="display: none;" onclick="saveMemo()">保存</button>
-            </div>
         </div>
 
     </div>
@@ -72,6 +65,7 @@
             <th>14:00</th>
             <th>終値</th>
             <th>備考</th>
+            <th>修正</th>
         </tr>
         </thead>
         <tbody id="financialData">
