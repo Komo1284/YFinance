@@ -170,7 +170,7 @@ function displayData(data) {
                 ${createCell(entry.price13 === 0.0 ? "---------" : entry.price13.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
                 ${createCell(entry.price14 === 0.0 ? "---------" : entry.price14.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
                 ${createCell(entry.close === 0.0 ? "---------" : entry.close.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
-                <td class="center-align" id="memo-${entry.symbol}">${entry.memo || ''}</td>
+                <td class="memo-cell" id="memo-${entry.symbol}">${entry.memo || ''}</td>
                 <td class="center-align">
                     <button class="edit-btn" onclick="editMemo('${entry.symbol}')">修正</button>
                 </td>

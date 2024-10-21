@@ -356,3 +356,11 @@ a:hover {
 .autocomplete-items div:hover {
     background-color: #e9e9e9;
 }
+
+/* 비고란의 최대 너비를 지정하고, 줄바꿈이 자동으로 이루어지도록 설정 */
+td.memo-cell {
+    max-width: 200px; /* 비고란의 최대 너비를 200px로 설정 */
+    word-wrap: break-word; /* 길이가 긴 단어는 줄바꿈이 이루어지도록 설정 */
+    white-space: normal; /* 긴 텍스트가 셀을 넘지 않고 여러 줄로 표시되도록 설정 */
+    text-align: left; /* 텍스트를 좌측 정렬 */
+}
