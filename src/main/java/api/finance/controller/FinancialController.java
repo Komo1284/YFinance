@@ -19,6 +19,19 @@ import java.util.*;
 public class FinancialController {
 
     private final FinancialService financialService;
+    // 서버 메모리에 검색 결과를 저장할 변수
+    private List<FinancialDataDto> lastSearchResults;
+
+    @PostMapping("/save-search-results")
+    public void saveSearchResults(@RequestBody List<FinancialDataDto> results) {
+        System.out.println(results);
+        lastSearchResults = results;  // 검색 결과를 서버 메모리에 저장
+    }
+
+    @GetMapping("/get-last-search-results")
+    public List<FinancialDataDto> getLastSearchResults() {
+        return lastSearchResults;  // 마지막 검색 결과 반환
+    }
 
     @PostMapping("/add-symbol")
     public ResponseEntity<String> addSymbol(@RequestParam String symbol) {

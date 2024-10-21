@@ -14,4 +14,5 @@ public class FinancialDataDto {
     private double price14;
     private double close;
     private String symbol;
+    private String memo;
 }
