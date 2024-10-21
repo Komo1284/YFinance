@@ -84,9 +84,19 @@ window.onload = function () {
 };
 
 function setDefaultDates() {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('startDate').value = today;
-    document.getElementById('endDate').value = today;
+    const today = new Date();
+
+    // 오늘 날짜 설정
+    const todayString = today.toISOString().split('T')[0];
+
+    // 2일 전 날짜 계산
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(today.getDate() - 2);
+    const twoDaysAgoString = twoDaysAgo.toISOString().split('T')[0];
+
+    // HTML의 시작 날짜와 끝 날짜 필드에 값 설정
+    document.getElementById('startDate').value = twoDaysAgoString; // 2일 전 날짜를 시작 날짜로 설정
+    document.getElementById('endDate').value = todayString;        // 오늘 날짜를 종료 날짜로 설정
 }
 
 async function fetchFinancialData() {
