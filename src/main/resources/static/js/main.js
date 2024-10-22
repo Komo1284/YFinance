@@ -150,7 +150,8 @@ function displayData(data) {
 
     data.forEach(entry => {
         const symbol = entry.symbol;
-        const date = entry.date;  // 각 행의 날짜 추가
+        const date = entry.date;
+        const isDivider = entry.open === 0.0 && entry.price10 === 0.0 && entry.price11 === 0.0 && entry.price13 === 0.0 && entry.price14 === 0.0 && entry.close === 0.0;
         const secUrl = `https://www.sbisec.co.jp/ETGate/?_ControlID=WPLETsiR001Control&_PageID=WPLETsiR001Idtl30&_DataStoreID=DSWPLETsiR001Control&_ActionID=DefaultAID&s_rkbn=2&s_btype=&i_stock_sec=${symbol}&i_dom_flg=1&i_exchange_code=JPN&i_output_type=2&exchange_code=TKY&stock_sec_code_mul=${symbol}&ref_from=1&ref_to=20`;
 
         const createCell = (value, isNumeric) => {
@@ -160,7 +161,7 @@ function displayData(data) {
 
         const companyNameWithSymbol = symbol ? `${entry.shortName} (${symbol})` : entry.shortName;
 
-        const row = `
+        let row = `
             <tr>
                 <td class="center-align">${date}</td>  <!-- 날짜 -->
                 <td class="center-align"><a href="${secUrl}" target="_blank">${companyNameWithSymbol}</a></td>
@@ -170,12 +171,21 @@ function displayData(data) {
                 ${createCell(entry.price13 === 0.0 ? "---------" : entry.price13.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
                 ${createCell(entry.price14 === 0.0 ? "---------" : entry.price14.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
                 ${createCell(entry.close === 0.0 ? "---------" : entry.close.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1}), true)}
-                <td class="memo-cell" id="memo-${symbol}-${date}">${entry.memo || ''}</td>  <!-- 메모 셀 ID에 심볼과 날짜 추가 -->
+                <td class="memo-cell" id="memo-${symbol}-${date}">${entry.memo || ''}</td>
+        `;
+
+        // 구분선이 아닌 경우에만 수정 버튼 표시
+        if (!isDivider) {
+            row += `
                 <td class="center-align">
                     <button class="edit-btn" onclick="editMemo('${symbol}', '${date}')">修正</button>  <!-- 날짜를 함께 전달 -->
                 </td>
-            </tr>
-        `;
+            `;
+        } else {
+            row += `<td></td>`;  // 구분선인 경우에는 빈 셀 추가
+        }
+
+        row += `</tr>`;
         tableBody.innerHTML += row;
     });
 
