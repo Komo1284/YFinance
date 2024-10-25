@@ -92,6 +92,12 @@ public class FinancialController {
 
         for (String sym : symbols) {
             String response = financialService.fetchData(sym, startDate, endDate);
+            if (response == null) {
+                // 심볼에 대한 데이터를 찾을 수 없는 경우, 경고 로그 추가
+                System.err.println("No data found for symbol: " + sym);
+                continue;  // 다음 심볼로 진행
+            }
+
             FinancialResponse financialResponse = parseResponse(response);
 
             String previousDate = "";

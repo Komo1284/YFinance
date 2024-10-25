@@ -1,33 +1,38 @@
-let symbols = [];
+let searchSymbols = [];  // 검색에 사용할 심볼 리스트
+let memoSymbols = [];  // 메모가 포함된 검색 결과
 
+// 서버에서 저장된 심볼을 불러오고 검색 심볼 리스트를 업데이트
 async function fetchSavedSymbols() {
     try {
         const response = await fetch("/get-symbols");
-        symbols = await response.json();
+        const savedSymbols = await response.json();
 
-        // 서버에서 받은 symbols가 객체인 경우, 객체의 키(증권 코드)를 정렬
-        if (symbols && typeof symbols === 'object') {
-            const sortedSymbols = Object.keys(symbols).sort((a, b) => Number(a) - Number(b));
-            displaySymbols(sortedSymbols);  // 정렬된 심볼 리스트를 넘김
+        if (savedSymbols && typeof savedSymbols === 'object') {
+            const sortedSymbols = Object.keys(savedSymbols).sort((a, b) => Number(a) - Number(b));
+            searchSymbols = sortedSymbols;  // 불러온 심볼로 검색 심볼 리스트를 설정
+            displaySymbols(sortedSymbols);
         }
     } catch (error) {
         console.error("Error fetching symbols:", error);
     }
 }
 
+
+// 심볼 추가 시 검색 리스트에 반영
 function addSymbol() {
     const symbol = document.getElementById('symbol').value;
-    if (symbol && !symbols[symbol]) {
-        fetch(`/add-symbol?symbol=${symbol}`, {method: 'POST'})
+    if (symbol && !searchSymbols.includes(symbol)) {
+        fetch(`/add-symbol?symbol=${symbol}`, { method: 'POST' })
             .then(response => {
-                if (!response.ok) {  // 응답이 성공적이지 않으면 오류 메시지 처리
+                if (!response.ok) {
                     return response.text().then(message => { throw new Error(message); });
                 }
                 return response.text();
             })
             .then(() => {
-                fetchSavedSymbols(); // 추가 후 즉시 리스트를 다시 불러오기
-                document.getElementById('symbol').value = '';  // 입력 필드를 초기화
+                searchSymbols.push(symbol);  // 검색 심볼 리스트에 추가
+                fetchSavedSymbols();
+                document.getElementById('symbol').value = '';  // 입력 필드 초기화
             })
             .catch(error => {
                 alert('存在しないコードです。\nもう一度コードを確認してください。');
@@ -35,13 +40,18 @@ function addSymbol() {
     }
 }
 
+// 심볼 삭제 시 검색 리스트에서 삭제
 function removeSymbol(symbol) {
     if (confirm('本当にリストから削除しますか?')) {
-        fetch(`/remove-symbol?symbol=${symbol}`, {method: 'POST'})
-            .then(() => fetchSavedSymbols())  // 삭제 후 즉시 리스트를 다시 불러오기
+        fetch(`/remove-symbol?symbol=${symbol}`, { method: 'POST' })
+            .then(() => {
+                searchSymbols = searchSymbols.filter(s => s !== symbol);  // 검색 심볼 리스트에서 제거
+                fetchSavedSymbols();  // 삭제 후 업데이트
+            })
             .catch(error => console.error('Error removing symbol:', error));
     }
 }
+
 
 async function displaySymbols(sortedSymbols) {
     const symbolList = document.getElementById('symbolList');
@@ -95,28 +105,40 @@ function setDefaultDates() {
     document.getElementById('endDate').value = todayString;          // 오늘 날짜를 종료 날짜로 설정
 }
 
+// 금융 데이터를 가져오는 함수
 async function fetchFinancialData() {
     document.getElementById('loading-container').style.display = 'flex';
 
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
 
-    if (!startDate || !endDate || Object.keys(symbols).length === 0) {
+    if (!startDate || !endDate || searchSymbols.length === 0) {  // 검색에 필요한 값들이 모두 있는지 확인
         alert('すべての入力値を入力してください。');
         document.getElementById('loading-container').style.display = 'none';
         return;
     }
 
-    const symbolList = Object.keys(symbols).join(',');
+    const symbolList = searchSymbols.join(',');
+
+    console.log('Requesting data for symbols:', symbolList);
+
     try {
         const response = await fetch(`/financial-data?startDate=${new Date(startDate).getTime() / 1000}&endDate=${new Date(endDate).getTime() / 1000}&symbol=${symbolList}`);
-        const data = await response.json();
 
-        if (response.ok) {
-            displayData(data);
-        } else {
-            alert('データの取得に失敗しました。');
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error details:', errorText);
+
+            if (response.status === 404) {
+                alert('指定されたシンボルに対するデータが見つかりませんでした。');
+            } else {
+                alert('データの取得に失敗しました。');
+            }
+            return;
         }
+
+        const data = await response.json();
+        displayData(data);  // 데이터를 별도로 처리
     } catch (error) {
         console.error('Error fetching data:', error);
         alert('データの取得に失敗しました。');
@@ -136,7 +158,7 @@ function saveSearchResults(data) {
     }).catch(error => console.error('Error saving search results:', error));
 }
 
-
+// 검색 결과 및 메모 표시
 function displayData(data) {
     const tableBody = document.getElementById('financialData');
     tableBody.innerHTML = '';
@@ -146,7 +168,7 @@ function displayData(data) {
         return;
     }
 
-    symbols = data;
+    memoSymbols = data;  // 메모가 포함된 검색 결과를 저장
 
     data.forEach(entry => {
         const symbol = entry.symbol;
@@ -189,7 +211,7 @@ function displayData(data) {
         tableBody.innerHTML += row;
     });
 
-    saveSearchResults(data);
+    saveSearchResults(data);  // 검색결과와 메모를 서버에 저장
 }
 
 function editMemo(symbol, date) {
@@ -206,8 +228,8 @@ function editMemo(symbol, date) {
 function saveMemo(symbol, date) {
     const newMemo = document.getElementById(`memo-input-${symbol}-${date}`).value;
 
-    // symbols 배열에서 해당 심볼과 날짜를 찾아 메모를 업데이트
-    symbols = symbols.map(entry => {
+    // memoSymbols 배열에서 해당 심볼과 날짜를 찾아 메모를 업데이트
+    memoSymbols = memoSymbols.map(entry => {
         if (entry.symbol === symbol && entry.date === date) {
             entry.memo = newMemo;  // 메모를 업데이트
         }
@@ -220,7 +242,7 @@ function saveMemo(symbol, date) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(symbols),  // 수정된 전체 데이터를 서버로 전송
+        body: JSON.stringify(memoSymbols),  // 수정된 전체 데이터를 서버로 전송
     }).then(response => {
         if (response.ok) {
             // 서버 저장이 완료된 후 화면을 업데이트

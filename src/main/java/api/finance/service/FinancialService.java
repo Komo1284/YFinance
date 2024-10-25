@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -32,7 +33,13 @@ public class FinancialService {
         String url = String.format("https://query2.finance.yahoo.com/v8/finance/chart/%s.T?period1=%d&period2=%d&interval=1h",
                 symbol, startUnixTime, endUnixTime);
 
-        return restTemplate.getForObject(url, String.class);
+        try {
+            return restTemplate.getForObject(url, String.class);
+        } catch (HttpClientErrorException.NotFound e) {
+            // 404 에러에 대한 처리 추가
+            System.err.println("Symbol not found or may be delisted: " + symbol);
+            return null; // 데이터를 찾을 수 없으면 null 반환
+        }
     }
 
     /// 기업 코드와 이름을 저장하는 Map
